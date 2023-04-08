@@ -1,22 +1,23 @@
-import entidades.Necromancer;
-import entidades.Personagem;
-import entidades.Servo;
-import entidades.Suporte;
+import entidades.*;
 
 public class App {
     public static void main(String[] args) {
         // Teste
-        Personagem suporte = new Suporte(20, 100, 10);
-        System.out.println(suporte.toString());
+        Suporte suporte = new Suporte(20, 100, 10);
 
-        Personagem necromancer = new Necromancer(30, 300, 20);
-        System.out.println(necromancer.toString());
-        System.out.println(necromancer.atacar(suporte));
-        System.out.printf("Vida do suporte após ataque: %d\n", suporte.getVidaAtual());
+        Mago mago = new Mago(30, 80, 20);
+        System.out.println(mago.toString());
 
-        Personagem servo = new Servo(12, 40, 8);
-        System.out.println(servo.toString());
-        System.out.println(servo.atacar(suporte));
-        System.out.printf("Vida do suporte após ataque: %d\n", suporte.getVidaAtual());
+        Npc necromancer = new Necromancer(30, 300, 20);
+        System.out.println(necromancer.atacar(mago));
+        System.out.printf("Vida do mago após ataque: %d\n", mago.getVidaAtual());
+
+        Npc servo = new Servo(12, 40, 8);
+        System.out.println(servo.atacar(mago));
+        System.out.printf("Vida do mago após ataque: %d\n", mago.getVidaAtual());
+
+        suporte.curar(mago);
+
+        System.out.printf("Vida do mago após o suporte curá-lo: %d\n", mago.getVidaAtual());
     }
 }

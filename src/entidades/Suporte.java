@@ -1,16 +1,11 @@
 package entidades;
 public class Suporte extends Personagem {
-    private int qtdCuraInicial;
+    private int qtdCuraInicial = 10;
     private int qtdCuraAtual;
 
     public Suporte(int ataque, int vida, int defesa) {
         super(ataque, vida, defesa);
-        setQtdCuraInicial(10);
         setQtdCuraAtual(this.qtdCuraInicial);
-    }
-
-    public void setQtdCuraInicial(int qtd) {
-        this.qtdCuraInicial = qtd;
     }
 
     public int getQtdCuraInicial() {
@@ -25,8 +20,8 @@ public class Suporte extends Personagem {
         return this.qtdCuraAtual;
     }
 
-    public String curar(Personagem personagem) {
-        return "Um personagem foi curado";
+    public void curar(Personagem personagem) {
+        personagem.setVidaAtual(personagem.getVidaAtual() + 15);
     }
 
     @Override
