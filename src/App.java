@@ -1,15 +1,22 @@
+import entidades.Necromancer;
 import entidades.Personagem;
+import entidades.Servo;
 import entidades.Suporte;
 
 public class App {
     public static void main(String[] args) {
         // Teste
-        Personagem suporte = new Suporte(15, 100, 10);
-        Personagem suporte2 = new Suporte(15, 100, 10);
+        Personagem suporte = new Suporte(20, 100, 10);
         System.out.println(suporte.toString());
-        System.out.println(suporte.atacar(suporte2));
-        System.out.printf("Vida do suporte 2 após ataque do suporte 1: %d\n", suporte2.getVidaAtual());
-        System.out.println(suporte.defender());
-        System.out.printf("Defesa com incremento: %d\n", suporte.getDefesaAtual());
+
+        Personagem necromancer = new Necromancer(30, 300, 20);
+        System.out.println(necromancer.toString());
+        System.out.println(necromancer.atacar(suporte));
+        System.out.printf("Vida do suporte após ataque: %d\n", suporte.getVidaAtual());
+
+        Personagem servo = new Servo(12, 40, 8);
+        System.out.println(servo.toString());
+        System.out.println(servo.atacar(suporte));
+        System.out.printf("Vida do suporte após ataque: %d\n", suporte.getVidaAtual());
     }
 }

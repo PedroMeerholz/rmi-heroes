@@ -79,10 +79,13 @@ public abstract class Personagem {
 
     public String atacar(Personagem personagemAlvo) {
         int dano = this.ataqueAtual - personagemAlvo.getDefesaAtual();
-        personagemAlvo.setVidaAtual(personagemAlvo.getVidaAtual() - dano);
-        return "Atacou";
+        if(dano <= 0) {
+            return "O ataque não causou nenhum dano ao alvo";
+        } else {
+            personagemAlvo.setVidaAtual(personagemAlvo.getVidaAtual() - dano);
+            return "Dano causado: " + dano;
+        }
     }
-
     public String defender() {
         this.adicionarBonusDefesa();
         return "Irei defender na próxima rodada";
