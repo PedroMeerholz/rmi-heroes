@@ -1,23 +1,36 @@
 import entidades.*;
+import prompt.SelecaoPersonagens;
+
+import java.util.ArrayList;
 
 public class App {
+    private static SelecaoPersonagens selecaoPersonagens = new SelecaoPersonagens();
+    private static ArrayList<Personagem> personagens = new ArrayList<Personagem>();
     public static void main(String[] args) {
         // Teste
-        Suporte suporte = new Suporte(20, 100, 10);
-
-        Mago mago = new Mago(30, 80, 20);
-        System.out.println(mago.toString());
-
-        Npc necromancer = new Necromancer(30, 300, 20);
-        System.out.println(necromancer.atacar(mago));
-        System.out.printf("Vida do mago após ataque: %d\n", mago.getVidaAtual());
-
-        Npc servo = new Servo(12, 40, 8);
-        System.out.println(servo.atacar(mago));
-        System.out.printf("Vida do mago após ataque: %d\n", mago.getVidaAtual());
-
-        suporte.curar(mago);
-
-        System.out.printf("Vida do mago após o suporte curá-lo: %d\n", mago.getVidaAtual());
+        System.out.println("===== RMI HEROES =====");
+        if(selecaoPersonagens.mostrarOpcoesIniciais() == 2) {
+            System.out.println("Jogo finalizado!");
+            System.exit(0);
+        } else {
+            int idClassePersonagem = selecaoPersonagens.selecionarPersonagem();
+            if(idClassePersonagem == 1) {
+                Arqueiro arqueiro = new Arqueiro(59, 640, 26);
+                personagens.add(arqueiro);
+                System.out.println(arqueiro.toString());
+            } else if(idClassePersonagem == 2) {
+                Guerreiro guerreiro = new Guerreiro(64, 652, 39);
+                personagens.add(guerreiro);
+                System.out.println(guerreiro.toString());
+            } else if(idClassePersonagem == 3) {
+                Mago mago = new Mago(53, 590, 21);
+                personagens.add(mago);
+                System.out.println(mago.toString());
+            } else if(idClassePersonagem == 4) {
+                Suporte suporte = new Suporte(47, 595, 29);
+                personagens.add(suporte);
+                System.out.println(suporte.toString());
+            }
+        }
     }
 }
