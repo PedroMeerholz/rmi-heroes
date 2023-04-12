@@ -11,6 +11,7 @@ public class Guerreiro extends Personagem{
         return "Você é um guerreiro." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
-                "\nDefesa: " + getDefesaAtual();
+                "\nDefesa: " + getDefesaAtual() +
+                "\n";
     }
 }

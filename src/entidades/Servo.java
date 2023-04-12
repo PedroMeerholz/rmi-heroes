@@ -9,6 +9,7 @@ public class Servo extends Npc {
         return "Um servo do necromancer surgiu." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
-                "\nDefesa: " + getDefesaAtual();
+                "\nDefesa: " + getDefesaAtual() +
+                "\n";
     }
 }

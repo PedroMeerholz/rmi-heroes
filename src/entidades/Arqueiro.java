@@ -11,6 +11,7 @@ public class Arqueiro extends Personagem{
         return "Você é um arqueiro." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
-                "\nDefesa: " + getDefesaAtual();
+                "\nDefesa: " + getDefesaAtual() +
+                "\n";
     }
 }

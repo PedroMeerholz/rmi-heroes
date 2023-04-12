@@ -11,6 +11,7 @@ public class Mago extends Personagem {
         return "Você agora é um Mago." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
-                "\nDefesa: " + getDefesaAtual();
+                "\nDefesa: " + getDefesaAtual() +
+                "\n";
     }
 }

@@ -1,5 +1,7 @@
 package prompt;
 
+import entidades.*;
+
 import java.util.Scanner;
 
 public class SelecaoPersonagens {
@@ -24,7 +26,7 @@ public class SelecaoPersonagens {
         }
     }
 
-    public int selecionarPersonagem() {
+    public Personagem selecionarPersonagem() {
         Scanner scanner = new Scanner(System.in);
         int opcao;
         do {
@@ -32,7 +34,7 @@ public class SelecaoPersonagens {
             System.out.print("Digite aqui: ");
             opcao = scanner.nextInt();
         } while(this.verificaOpcaoPersonagem(opcao) == false);
-        return opcao;
+        return criaPersonagem(opcao);
     }
 
     private boolean verificaOpcaoPersonagem(int opcao) {
@@ -41,6 +43,26 @@ public class SelecaoPersonagens {
             return false;
         } else {
             return true;
+        }
+    }
+
+    private Personagem criaPersonagem(int idClassePersonagem) {
+        if(idClassePersonagem == 1) {
+            Arqueiro arqueiro = CriadorDePersonagem.criarArqueiro();
+            System.out.println(arqueiro.toString());
+            return arqueiro;
+        } else if(idClassePersonagem == 2) {
+            Guerreiro guerreiro = CriadorDePersonagem.criarGuerreiro();
+            System.out.println(guerreiro.toString());
+            return guerreiro;
+        } else if(idClassePersonagem == 3) {
+            Mago mago = CriadorDePersonagem.criarMago();
+            System.out.println(mago.toString());
+            return mago;
+        } else {
+            Suporte suporte = CriadorDePersonagem.criarSuporte();
+            System.out.println(suporte.toString());
+            return suporte;
         }
     }
 

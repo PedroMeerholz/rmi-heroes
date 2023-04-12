@@ -30,6 +30,7 @@ public class Suporte extends Personagem {
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
                 "\nDefesa: " + getDefesaAtual() +
-                "\nPoder de Cura: " + getQtdCuraAtual();
+                "\nPoder de Cura: " + getQtdCuraAtual() +
+                "\n";
     }
 }

@@ -9,6 +9,7 @@ public class Necromancer extends Npc {
         return "Um necromancer surgiu." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
-                "\nDefesa: " + getDefesaAtual();
+                "\nDefesa: " + getDefesaAtual() +
+                "\n";
     }
 }
