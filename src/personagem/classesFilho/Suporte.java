@@ -1,4 +1,7 @@
-package entidades;
+package personagem.classesFilho;
+
+import personagem.classesPai.Personagem;
+
 public class Suporte extends Personagem {
     private int qtdCuraInicial = 10;
     private int qtdCuraAtual;

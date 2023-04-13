@@ -1,10 +1,10 @@
 package prompt;
 
-import entidades.*;
+import personagem.*;
 
 import java.util.Scanner;
 
-public class SelecaoPersonagens {
+public class SelecaoPersonagem {
     public int mostrarOpcoesIniciais() {
         Scanner scanner = new Scanner(System.in);
         int opcao;
@@ -26,7 +26,7 @@ public class SelecaoPersonagens {
         }
     }
 
-    public Personagem selecionarPersonagem() {
+    public void selecionarPersonagem() {
         Scanner scanner = new Scanner(System.in);
         int opcao;
         do {
@@ -34,7 +34,7 @@ public class SelecaoPersonagens {
             System.out.print("Digite aqui: ");
             opcao = scanner.nextInt();
         } while(this.verificaOpcaoPersonagem(opcao) == false);
-        return criaPersonagem(opcao);
+        criaPersonagem(opcao);
     }
 
     private boolean verificaOpcaoPersonagem(int opcao) {
@@ -46,23 +46,15 @@ public class SelecaoPersonagens {
         }
     }
 
-    private Personagem criaPersonagem(int idClassePersonagem) {
+    private void criaPersonagem(int idClassePersonagem) {
         if(idClassePersonagem == 1) {
-            Arqueiro arqueiro = CriadorDePersonagem.criarArqueiro();
-            System.out.println(arqueiro.toString());
-            return arqueiro;
+            GerenciadorDePersonagem.criarArqueiro();
         } else if(idClassePersonagem == 2) {
-            Guerreiro guerreiro = CriadorDePersonagem.criarGuerreiro();
-            System.out.println(guerreiro.toString());
-            return guerreiro;
+            GerenciadorDePersonagem.criarGuerreiro();
         } else if(idClassePersonagem == 3) {
-            Mago mago = CriadorDePersonagem.criarMago();
-            System.out.println(mago.toString());
-            return mago;
+            GerenciadorDePersonagem.criarMago();
         } else {
-            Suporte suporte = CriadorDePersonagem.criarSuporte();
-            System.out.println(suporte.toString());
-            return suporte;
+            GerenciadorDePersonagem.criarSuporte();
         }
     }
 

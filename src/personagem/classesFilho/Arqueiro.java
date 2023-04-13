@@ -1,14 +1,16 @@
-package entidades;
+package personagem.classesFilho;
 
-public class Guerreiro extends Personagem{
+import personagem.classesPai.Personagem;
 
-    public Guerreiro(int ataque, int vida, int defesa) {
+public class Arqueiro extends Personagem {
+
+    public Arqueiro(int ataque, int vida, int defesa) {
         super(ataque, vida, defesa);
     }
 
     @Override
     public String toString() {
-        return "Você é um guerreiro." +
+        return "Você é um arqueiro." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
                 "\nDefesa: " + getDefesaAtual() +

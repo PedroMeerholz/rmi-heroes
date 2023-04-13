@@ -1,14 +1,15 @@
-package entidades;
+package personagem.classesFilho;
 
-public class Mago extends Personagem {
+import personagem.classesPai.Npc;
 
-    public Mago(int ataque, int vida, int defesa) {
+public class Necromancer extends Npc {
+    public Necromancer(int ataque, int vida, int defesa) {
         super(ataque, vida, defesa);
     }
 
     @Override
     public String toString() {
-        return "Você agora é um Mago." +
+        return "Um necromancer surgiu." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
                 "\nDefesa: " + getDefesaAtual() +

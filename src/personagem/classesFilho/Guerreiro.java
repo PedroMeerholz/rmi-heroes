@@ -1,12 +1,16 @@
-package entidades;
-public class Servo extends Npc {
-    public Servo(int ataque, int vida, int defesa) {
+package personagem.classesFilho;
+
+import personagem.classesPai.Personagem;
+
+public class Guerreiro extends Personagem {
+
+    public Guerreiro(int ataque, int vida, int defesa) {
         super(ataque, vida, defesa);
     }
 
     @Override
     public String toString() {
-        return "Um servo do necromancer surgiu." +
+        return "Você é um guerreiro." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
                 "\nDefesa: " + getDefesaAtual() +

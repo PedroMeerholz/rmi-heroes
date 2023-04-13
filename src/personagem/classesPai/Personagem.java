@@ -1,4 +1,4 @@
-package entidades;
+package personagem.classesPai;
 public abstract class Personagem {
     private int ataqueBase;
     private int defesaBase;
@@ -77,13 +77,14 @@ public abstract class Personagem {
         this.vivo = vivo;
     }
 
-    public String atacar(Personagem personagemAlvo) {
+    public void atacar(Personagem personagemAlvo) {
         int dano = this.ataqueAtual - personagemAlvo.getDefesaAtual();
         if(dano <= 0) {
-            return "O ataque não causou nenhum dano ao alvo";
+            System.out.println("O ataque não causou nenhum dano ao alvo");
         } else {
             personagemAlvo.setVidaAtual(personagemAlvo.getVidaAtual() - dano);
-            return "Dano causado: " + dano;
+            System.out.println("Dano causado: " + dano);
+            System.out.println("Vida atual do alvo: " + personagemAlvo.getVidaAtual());
         }
     }
     public String defender() {
