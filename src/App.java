@@ -33,8 +33,8 @@ public class App {
         Turno turno = new Turno();
         while(npcs.get(0).isVivo() == true || herois.size() > 0) {
             // Turno personagem
-            jogo.removerBonusDeDefesaExistente();
             jogo.mostrarOpcoesDoTurno(turno.getTurno());
+            jogo.removerBonusDeDefesaExistente();
             turno.avancarTurno();
         }
     }
