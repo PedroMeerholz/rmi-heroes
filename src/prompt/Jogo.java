@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class Jogo {
     private ArrayList<Npc> npcs = GerenciadorDePersonagem.npcs;
     private ArrayList<Personagem> herois = GerenciadorDePersonagem.herois;
+    private ArrayList<Personagem> heroisComBonusDeDefesa = new ArrayList<>();
 
     public void mostrarOpcoesDoTurno(int turno) {
         int opcao;
@@ -40,6 +41,8 @@ public class Jogo {
             herois.get(0).atacar(npcs.get(alvo-1));
         } else {
             // defender
+            herois.get(0).defender();
+            heroisComBonusDeDefesa.add(herois.get(0));
         }
     }
 
@@ -63,6 +66,14 @@ public class Jogo {
             return false;
         } else {
             return true;
+        }
+    }
+
+    public void removerBonusDeDefesaExistente() {
+        if(heroisComBonusDeDefesa.size() > 0) {
+            for (int i = 0; i < heroisComBonusDeDefesa.size(); i++) {
+                heroisComBonusDeDefesa.get(i).removerBonusDefesa();
+            }
         }
     }
 }

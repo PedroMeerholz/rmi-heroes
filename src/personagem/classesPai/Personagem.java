@@ -96,7 +96,7 @@ public abstract class Personagem {
         this.defesaAtual += 5;
     }
 
-    private void removerBonusDefesa() {
+    public void removerBonusDefesa() {
         this.defesaAtual -= 5;
     }
 }
