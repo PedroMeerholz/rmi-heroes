@@ -1,4 +1,4 @@
-package personagem.classesPai;
+package personagem;
 public abstract class Personagem {
     private int ataqueBase;
     private int defesaBase;
@@ -80,16 +80,16 @@ public abstract class Personagem {
     public void atacar(Personagem personagemAlvo) {
         int dano = this.ataqueAtual - personagemAlvo.getDefesaAtual();
         if(dano <= 0) {
-            System.out.println("O ataque não causou nenhum dano ao alvo");
+            System.out.println("O ataque não causou nenhum dano ao alvo.\n");
         } else {
             personagemAlvo.setVidaAtual(personagemAlvo.getVidaAtual() - dano);
-            System.out.println("Dano causado: " + dano);
-            System.out.println("Vida atual do alvo: " + personagemAlvo.getVidaAtual());
+            System.out.printf("Dano causado: %d\n", dano);
+            System.out.printf("Vida atual do alvo: %d\n\n", personagemAlvo.getVidaAtual());
         }
     }
-    public String defender() {
+
+    public void defender() {
         this.adicionarBonusDefesa();
-        return "Irei defender na próxima rodada";
     }
 
     private void adicionarBonusDefesa() {

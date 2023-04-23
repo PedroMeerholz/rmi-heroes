@@ -1,19 +1,22 @@
-package personagem.classesFilho;
+package personagem.herois;
 
-import personagem.classesPai.Personagem;
+public class Arqueiro extends Heroi {
 
-public class Mago extends Personagem {
-
-    public Mago(int ataque, int vida, int defesa) {
+    public Arqueiro(int ataque, int vida, int defesa) {
         super(ataque, vida, defesa);
     }
 
     @Override
     public String toString() {
-        return "Você agora é um Mago." +
+        return "Você é um arqueiro." +
                 "\nVida: " + getVidaAtual() +
                 "\nAtaque: " + getAtaqueAtual() +
                 "\nDefesa: " + getDefesaAtual() +
                 "\n";
+    }
+
+    @Override
+    public String classeHeroi() {
+        return "Arqueiro";
     }
 }

@@ -1,6 +1,6 @@
 import personagem.GerenciadorDePersonagem;
-import personagem.classesPai.Npc;
-import personagem.classesPai.Personagem;
+import personagem.herois.Heroi;
+import personagem.npcs.Npc;
 import prompt.Jogo;
 import prompt.SelecaoPersonagem;
 import utils.Turno;
@@ -13,7 +13,7 @@ public class App {
         SelecaoPersonagem selecaoPersonagem = new SelecaoPersonagem();
         GerenciadorDePersonagem.criarNpcs();
         ArrayList<Npc> npcs = GerenciadorDePersonagem.npcs;
-        ArrayList<Personagem> herois = GerenciadorDePersonagem.herois;
+        ArrayList<Heroi> herois = GerenciadorDePersonagem.herois;
         Jogo jogo = new Jogo();
 
         System.out.println("===== RMI HEROES =====");
@@ -24,16 +24,16 @@ public class App {
         } else {
             selecaoPersonagem.selecionarPersonagem();
         }
-        System.out.printf("Qtd personagens: %d\n", herois.size());
 
         System.out.println("Você adentra em um castelo antigo e se acordou um Necromancer e três de seus servos...");
         System.out.println("Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...");
-        System.out.println("Você tem o dever de derrotá-los e evitar que eles escapem!");
+        System.out.println("Você tem o dever de derrotá-los e evitar que eles escapem!\n");
 
         Turno turno = new Turno();
-        while(npcs.get(0).isVivo() == true || herois.size() > 0) {
+        while(!npcs.isEmpty() || herois.size() > 0) {
             // Turno personagem
-            jogo.mostrarOpcoesDoTurno(turno.getTurno());
+            jogo.executarTurnoDoJogador(turno.getTurno());
+            jogo.executarTurnoDosNpcs();
             jogo.removerBonusDeDefesaExistente();
             turno.avancarTurno();
         }

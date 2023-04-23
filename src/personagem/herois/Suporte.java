@@ -1,8 +1,6 @@
-package personagem.classesFilho;
+package personagem.herois;
 
-import personagem.classesPai.Personagem;
-
-public class Suporte extends Personagem {
+public class Suporte extends Heroi {
     private int qtdCuraInicial = 10;
     private int qtdCuraAtual;
 
@@ -23,8 +21,8 @@ public class Suporte extends Personagem {
         return this.qtdCuraAtual;
     }
 
-    public void curar(Personagem personagem) {
-        personagem.setVidaAtual(personagem.getVidaAtual() + 15);
+    public void curar(Heroi heroi) {
+        heroi.setVidaAtual(heroi.getVidaAtual() + 15);
     }
 
     @Override
@@ -35,5 +33,10 @@ public class Suporte extends Personagem {
                 "\nDefesa: " + getDefesaAtual() +
                 "\nPoder de Cura: " + getQtdCuraAtual() +
                 "\n";
+    }
+
+    @Override
+    public String classeHeroi() {
+        return "Suporte";
     }
 }

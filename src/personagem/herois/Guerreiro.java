@@ -1,8 +1,6 @@
-package personagem.classesFilho;
+package personagem.herois;
 
-import personagem.classesPai.Personagem;
-
-public class Guerreiro extends Personagem {
+public class Guerreiro extends Heroi {
 
     public Guerreiro(int ataque, int vida, int defesa) {
         super(ataque, vida, defesa);
@@ -15,5 +13,10 @@ public class Guerreiro extends Personagem {
                 "\nAtaque: " + getAtaqueAtual() +
                 "\nDefesa: " + getDefesaAtual() +
                 "\n";
+    }
+
+    @Override
+    public String classeHeroi() {
+        return "Guerreiro";
     }
 }

@@ -1,18 +1,19 @@
 package prompt;
 
 import personagem.GerenciadorDePersonagem;
-import personagem.classesPai.Npc;
-import personagem.classesPai.Personagem;
+import personagem.herois.Heroi;
+import personagem.npcs.Npc;
+import personagem.Personagem;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Jogo {
     private ArrayList<Npc> npcs = GerenciadorDePersonagem.npcs;
-    private ArrayList<Personagem> herois = GerenciadorDePersonagem.herois;
+    private ArrayList<Heroi> herois = GerenciadorDePersonagem.herois;
     private ArrayList<Personagem> heroisComBonusDeDefesa = new ArrayList<>();
 
-    public void mostrarOpcoesDoTurno(int turno) {
+    public void executarTurnoDoJogador(int turno) {
         int opcao;
         Scanner scanner = new Scanner(System.in);
         do {
@@ -22,19 +23,19 @@ public class Jogo {
             System.out.println("2 - Defender");
             System.out.printf("Digite aqui: ");
             opcao = scanner.nextInt();
-        } while (this.verificaOpcaoDoTurno(opcao) == false);
+        } while (this.verificaOpcaoDoTurnoDoJogador(opcao) == false);
     }
 
-    private boolean verificaOpcaoDoTurno(int opcao) {
+    private boolean verificaOpcaoDoTurnoDoJogador(int opcao) {
         if(opcao < 1 || opcao > 2) {
             return false;
         } else {
-            this.acionaAcaoTurno(opcao);
+            this.acionaAcaoTurnoDoJogador(opcao);
             return true;
         }
     }
 
-    private void acionaAcaoTurno(int opcao) {
+    private void acionaAcaoTurnoDoJogador(int opcao) {
         if(opcao == 1) {
             // atacar
             int alvo = selecionarAlvo();
@@ -75,5 +76,21 @@ public class Jogo {
                 heroisComBonusDeDefesa.get(i).removerBonusDefesa();
             }
         }
+        heroisComBonusDeDefesa.clear();
+    }
+
+    public void executarTurnoDosNpcs() {
+        Npc npc;
+        for(int i = 0; i < this.npcs.size(); i++) {
+            npc = this.npcs.get(i);
+            int alvo = npc.selecionarAlvo();
+            this.atacarHeroiAlvo(this.npcs.get(i), this.herois.get(alvo));
+        }
+    }
+
+    private void atacarHeroiAlvo(Npc npc, Heroi heroi) {
+        System.out.printf("%s está atacando...\n", npc.getNome());
+        System.out.printf("%s atacou o %s. ", npc.getNome(), heroi.classeHeroi());
+        npc.atacar(heroi);
     }
 }

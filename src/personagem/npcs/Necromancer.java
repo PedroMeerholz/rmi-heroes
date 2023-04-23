@@ -1,10 +1,10 @@
-package personagem.classesFilho;
+package personagem.npcs;
 
-import personagem.classesPai.Npc;
+import personagem.npcs.Npc;
 
 public class Necromancer extends Npc {
-    public Necromancer(int ataque, int vida, int defesa) {
-        super(ataque, vida, defesa);
+    public Necromancer(int ataque, int vida, int defesa, String nome) {
+        super(ataque, vida, defesa, nome);
     }
 
     @Override
