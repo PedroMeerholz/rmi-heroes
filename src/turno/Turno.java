@@ -1,4 +1,4 @@
-package utils;
+package turno;
 
 public class Turno {
     private int turno = 1;
