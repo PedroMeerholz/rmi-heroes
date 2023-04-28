@@ -6,10 +6,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class SocketIOManager {
-    public SocketIOManager() {
-        
-    }
-
     public void enviarMensagemParaOCliente(Socket socket, String mensagem) {
         try {
             PrintWriter saida = new PrintWriter(socket.getOutputStream(), true);
@@ -35,6 +31,15 @@ public class SocketIOManager {
             while((linha = entrada.readLine()) != null) {
                 System.out.println(linha);
             }
+        } catch(Exception erro) {
+            erro.printStackTrace();
+        }
+    }
+
+    public void enviarMensagemParaOServidor(Socket socket, String mensagem) {
+        try {
+            PrintWriter saida = new PrintWriter(socket.getOutputStream(), true);
+            saida.println(mensagem);
         } catch(Exception erro) {
             erro.printStackTrace();
         }

@@ -2,13 +2,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+
+import jogador.Jogador;
+import prompt.Jogo;
 import socket.SocketIOManager;
 
 public class Server {
     private final int PORTA = 4200;
     private int qtdJogadores = 0;
-    private ArrayList<Socket> sockets = new ArrayList<>();
-    private SocketIOManager socketIOManager = new SocketIOManager();;
+    private static ArrayList<Jogador> jogadores = new ArrayList<>();
+    private final SocketIOManager socketIOManager = new SocketIOManager();
+    private static Jogo jogo = new Jogo(jogadores);
+
     public static void main(String[] args) {
         Server server = new Server();
         server.iniciarServidor();
@@ -28,8 +33,9 @@ public class Server {
     private void aguardarConexao(ServerSocket serverSocket) throws IOException {
         while (this.qtdJogadores < 2) {
             Socket socket = serverSocket.accept();
-            this.sockets.add(socket);
             this.qtdJogadores += 1;
+            Jogador jogador = new Jogador(this.qtdJogadores, socket);
+            jogadores.add(jogador);
             System.out.printf("Jogador %d aceito\n", this.qtdJogadores);
             if(this.qtdJogadores == 1) {
                 String mensagem = "Aguardando o segundo jogador...";
@@ -45,8 +51,8 @@ public class Server {
         String mensagem = "Iniciando Jogo...";
         System.out.println(mensagem);
         try {
-            for (Socket socket : this.sockets) {
-                socketIOManager.enviarMensagemParaOCliente(socket, mensagem);
+            for (Jogador jogador : jogadores) {
+                socketIOManager.enviarMensagemParaOCliente(jogador.getSocket(), mensagem);
             }
         } catch (Exception erro) {
             erro.printStackTrace();
@@ -56,17 +62,16 @@ public class Server {
 
     private void mostrarMensagemInicial() {
         try {
-            for (Socket socket : sockets) {
-                System.out.println(socket.getPort());
+            for (Jogador jogador : jogadores) {
+                System.out.println(jogador.getSocket().getPort());
 
                 String mensagem = """
                         Você adentra em um antigo castelo e se depara um Necromancer e três de seus servos...
                         Se esses monstros sairem do castelo a humanidade estará em apuros...
                         Você tem o dever de derrotá-los e evitar que eles escapem!
                         """;
-                socketIOManager.enviarMensagemParaOCliente(socket, mensagem);
+                socketIOManager.enviarMensagemParaOCliente(jogador.getSocket(), mensagem);
             }
-
         } catch (Exception erro) {
             erro.printStackTrace();
         }
