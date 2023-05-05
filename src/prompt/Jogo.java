@@ -5,7 +5,6 @@ import personagem.GerenciadorDePersonagem;
 import personagem.herois.Heroi;
 import personagem.npcs.Npc;
 import personagem.Personagem;
-import socket.SocketIOManager;
 import turno.Turno;
 
 import java.net.Socket;
@@ -17,15 +16,12 @@ public class Jogo {
     private ArrayList<Heroi> herois;
     private ArrayList<Personagem> heroisComBonusDeDefesa;
     private Turno turno = new Turno();
-    private SocketIOManager socketIOManager;
     private ArrayList<Jogador> sockets;
 
-    public Jogo(ArrayList<Jogador> sockets) {
+    public Jogo() {
         GerenciadorDePersonagem.criarNpcs();
         this.npcs = GerenciadorDePersonagem.npcs;
         this.heroisComBonusDeDefesa = new ArrayList<>();
-        this.socketIOManager = new SocketIOManager();
-        this.sockets = sockets;
     }
 
     public void iniciarJogo() {
@@ -42,20 +38,13 @@ public class Jogo {
     private void executarTurnoDoJogador(int turno) {
         int opcao;
         Scanner scanner = new Scanner(System.in);
-        String mensagem = String.format(
-                "Turno %d\n" +
-                "Que ação você deseja fazer?" +
-                "1 - Atacar" +
-                "2 - Defender" +
-                "Digite aqui: " , turno);
         do {
-//            System.out.printf("Turno %d\n", turno);
-//            System.out.println("Que ação você deseja fazer? ");
-//            System.out.println("1 - Atacar");
-//            System.out.println("2 - Defender");
-//            System.out.printf("Digite aqui: ");
-//            this.socketIOManager.enviarMensagemParaOCliente();
-            opcao = scanner.nextInt();
+            System.out.printf("Turno %d\n", turno);
+            System.out.println("Que ação você deseja fazer? ");
+            System.out.println("1 - Atacar");
+            System.out.println("2 - Defender");
+            System.out.printf("Digite aqui: ");
+              opcao = scanner.nextInt();
         } while (this.verificaOpcaoDoTurnoDoJogador(opcao) == false);
     }
 
