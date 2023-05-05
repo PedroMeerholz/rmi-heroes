@@ -1,6 +1,6 @@
 package prompt;
 
-import jogador.Jogador;
+import multiplayer.socket.SocketIOManager;
 import personagem.GerenciadorDePersonagem;
 import personagem.herois.Heroi;
 import personagem.npcs.Npc;
@@ -15,16 +15,33 @@ public class Jogo {
     private ArrayList<Npc> npcs;
     private ArrayList<Heroi> herois;
     private ArrayList<Personagem> heroisComBonusDeDefesa;
+    private ArrayList<Socket> jogadoresConectados;
+    private SocketIOManager socketIOManager;
     private Turno turno = new Turno();
-    private ArrayList<Jogador> sockets;
 
-    public Jogo() {
+    public Jogo(ArrayList<Socket> jogadoresConectados) {
         GerenciadorDePersonagem.criarNpcs();
         this.npcs = GerenciadorDePersonagem.npcs;
         this.heroisComBonusDeDefesa = new ArrayList<>();
+        this.jogadoresConectados = jogadoresConectados;
+        this.socketIOManager = new SocketIOManager();
+    }
+
+    private void mostrarMensagemInicial() {
+//        String mensagem = String.format(
+//                "Você adentra em um castelo antigo e se deparou um Necromancer e três de seus servos...\n" +
+//                        "Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...\n" +
+//                        "Você tem o dever de derrotá-los e evitar que eles escapem!\n\n");
+        for (Socket socket : jogadoresConectados) {
+            this.socketIOManager.enviarMensagem(socket,
+                    "Você adentra em um castelo antigo e se deparou um Necromancer e três de seus servos...\n");
+            this.socketIOManager.enviarMensagem(socket, "Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...\n");
+            this.socketIOManager.enviarMensagem(socket, "Você tem o dever de derrotá-los e evitar que eles escapem!\n");
+        }
     }
 
     public void iniciarJogo() {
+        this.mostrarMensagemInicial();
         this.herois = GerenciadorDePersonagem.herois;
         do {
             this.executarTurnoDoJogador(turno.getTurno());
