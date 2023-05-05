@@ -15,15 +15,15 @@ public class Jogo {
     private ArrayList<Npc> npcs;
     private ArrayList<Heroi> herois;
     private ArrayList<Personagem> heroisComBonusDeDefesa;
-    private ArrayList<Socket> jogadoresConectados;
+    private Socket jogadorConectado;
     private SocketIOManager socketIOManager;
     private Turno turno = new Turno();
 
-    public Jogo(ArrayList<Socket> jogadoresConectados) {
+    public Jogo(Socket jogadorConectado) {
         GerenciadorDePersonagem.criarNpcs();
         this.npcs = GerenciadorDePersonagem.npcs;
         this.heroisComBonusDeDefesa = new ArrayList<>();
-        this.jogadoresConectados = jogadoresConectados;
+        this.jogadorConectado = jogadorConectado;
         this.socketIOManager = new SocketIOManager();
     }
 
@@ -32,12 +32,10 @@ public class Jogo {
 //                "Você adentra em um castelo antigo e se deparou um Necromancer e três de seus servos...\n" +
 //                        "Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...\n" +
 //                        "Você tem o dever de derrotá-los e evitar que eles escapem!\n\n");
-        for (Socket socket : jogadoresConectados) {
-            this.socketIOManager.enviarMensagem(socket,
-                    "Você adentra em um castelo antigo e se deparou um Necromancer e três de seus servos...\n");
-            this.socketIOManager.enviarMensagem(socket, "Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...\n");
-            this.socketIOManager.enviarMensagem(socket, "Você tem o dever de derrotá-los e evitar que eles escapem!\n");
-        }
+        this.socketIOManager.enviarMensagem(this.jogadorConectado,
+                "Você adentra em um castelo antigo e se deparou um Necromancer e três de seus servos...");
+        this.socketIOManager.enviarMensagem(this.jogadorConectado, "Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...");
+        this.socketIOManager.enviarMensagem(this.jogadorConectado, "Você tem o dever de derrotá-los e evitar que eles escapem!");
     }
 
     public void iniciarJogo() {

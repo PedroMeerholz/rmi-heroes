@@ -7,11 +7,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class Servidor {
     private final int porta;
-    private ArrayList<Socket> jogadoresConectados;
+    private Socket jogadorConectado;
     private Jogo jogo;
 
     public static void main(String[] args) {
@@ -22,8 +21,6 @@ public class Servidor {
 
     public Servidor() {
         this.porta = 4200;
-        this.jogadoresConectados = new ArrayList<>();
-        this.jogo = new Jogo(jogadoresConectados);
     }
 
     public Jogo getJogo() {
@@ -34,12 +31,12 @@ public class Servidor {
         try(ServerSocket serverSocket = new ServerSocket(porta)) {
             System.out.println("[SERVER] Servidor iniciado");
             System.out.println("[SERVER] Aguardando usuários...");
-            while(jogadoresConectados.size() < 2) {
+            while(jogadorConectado == null) {
                 Socket userSocket = serverSocket.accept();
-                jogadoresConectados.add(userSocket);
-                System.out.printf("[SERVER] Usuário %d (port: %d) conectado\n", jogadoresConectados.size(), userSocket.getPort());
-                System.out.printf("[SERVER] Usuário %d (local port: %d) conectado\n", jogadoresConectados.size(), userSocket.getLocalPort());
-                if (jogadoresConectados.size() == 1) System.out.println("[SERVER] Aguardando segundo usuário...");
+                jogadorConectado = userSocket;
+                System.out.printf("[SERVER] Usuário (port: %d) conectado\n", userSocket.getPort());
+                System.out.printf("[SERVER] Usuário (local port: %d) conectado\n", userSocket.getLocalPort());
+                this.jogo = new Jogo(this.jogadorConectado);
             }
         } catch(Exception exception) {
             exception.printStackTrace();

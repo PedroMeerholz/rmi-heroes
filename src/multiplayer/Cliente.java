@@ -58,8 +58,6 @@ public class Cliente {
     public void receberMensagem(Socket socket) {
         try {
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//            System.out.println(entrada.readLine());
-
             String linha;
             while((linha = entrada.readLine()) != null) {
                 System.out.println(linha);
