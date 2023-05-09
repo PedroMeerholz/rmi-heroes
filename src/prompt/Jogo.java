@@ -1,12 +1,12 @@
 package prompt;
 
-import multiplayer.socket.SocketIOManager;
 import personagem.GerenciadorDePersonagem;
 import personagem.herois.Heroi;
 import personagem.npcs.Npc;
 import personagem.Personagem;
 import turno.Turno;
 
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -16,7 +16,6 @@ public class Jogo {
     private ArrayList<Heroi> herois;
     private ArrayList<Personagem> heroisComBonusDeDefesa;
     private Socket jogadorConectado;
-    private SocketIOManager socketIOManager;
     private Turno turno = new Turno();
 
     public Jogo(Socket jogadorConectado) {
@@ -24,22 +23,21 @@ public class Jogo {
         this.npcs = GerenciadorDePersonagem.npcs;
         this.heroisComBonusDeDefesa = new ArrayList<>();
         this.jogadorConectado = jogadorConectado;
-        this.socketIOManager = new SocketIOManager();
     }
 
     private void mostrarMensagemInicial() {
-//        String mensagem = String.format(
-//                "Você adentra em um castelo antigo e se deparou um Necromancer e três de seus servos...\n" +
-//                        "Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...\n" +
-//                        "Você tem o dever de derrotá-los e evitar que eles escapem!\n\n");
-        this.socketIOManager.enviarMensagem(this.jogadorConectado,
-                "Você adentra em um castelo antigo e se deparou um Necromancer e três de seus servos...");
-        this.socketIOManager.enviarMensagem(this.jogadorConectado, "Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...");
-        this.socketIOManager.enviarMensagem(this.jogadorConectado, "Você tem o dever de derrotá-los e evitar que eles escapem!");
+        String[] mensagens = {
+                "[SERVIDOR] Você adentra em um castelo antigo e se deparou um Necromancer e três de seus servos... ",
+                "[SERVIDOR] Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...",
+                "[SERVIDOR] Você tem o dever de derrotá-los e evitar que eles escapem!"
+        };
+        this.enviarMensagem(this.jogadorConectado, mensagens);
     }
 
     public void iniciarJogo() {
         this.mostrarMensagemInicial();
+        SelecaoPersonagem selecaoPersonagem = new SelecaoPersonagem(this.jogadorConectado);
+        selecaoPersonagem.inicarSelecao();
         this.herois = GerenciadorDePersonagem.herois;
         do {
             this.executarTurnoDoJogador(turno.getTurno());
@@ -167,5 +165,25 @@ public class Jogo {
             System.out.println("==== FIM DE JOGO ====");
             System.exit(0);
         }
+    }
+
+    public void enviarMensagem(Socket socket, String[] mensagens) {
+        try {
+            ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
+            saida.writeObject(mensagens);
+        } catch(Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public int receberMensagem(Socket socket) {
+        try {
+            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println(entrada.read());
+            return entrada.read();
+        } catch(Exception exception) {
+            exception.printStackTrace();
+        }
+        return -1;
     }
 }

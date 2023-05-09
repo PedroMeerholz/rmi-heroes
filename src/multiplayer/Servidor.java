@@ -17,10 +17,18 @@ public class Servidor {
         Servidor servidor = new Servidor();
         servidor.iniciar_servidor();
         servidor.getJogo().iniciarJogo();
+//        while(true) {
+//            servidor.enviarMensagem(servidor.getJogadorConectado(), "[SERVIDOR] Teste");
+//            servidor.receberMensagem(servidor.getJogadorConectado());
+//        }
     }
 
     public Servidor() {
         this.porta = 4200;
+    }
+
+    public Socket getJogadorConectado() {
+        return  this.jogadorConectado;
     }
 
     public Jogo getJogo() {
@@ -36,8 +44,8 @@ public class Servidor {
                 jogadorConectado = userSocket;
                 System.out.printf("[SERVER] Usuário (port: %d) conectado\n", userSocket.getPort());
                 System.out.printf("[SERVER] Usuário (local port: %d) conectado\n", userSocket.getLocalPort());
-                this.jogo = new Jogo(this.jogadorConectado);
             }
+            this.jogo = new Jogo(this.jogadorConectado);
         } catch(Exception exception) {
             exception.printStackTrace();
         }

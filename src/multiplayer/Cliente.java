@@ -1,9 +1,9 @@
 package multiplayer;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Cliente {
     private final String host;
@@ -13,26 +13,20 @@ public class Cliente {
     public static void main(String[] args) {
         Cliente cliente = new Cliente();
         cliente.conectar();
+        Scanner scanner = new Scanner(System.in);
+        String mensagem;
         while (true) {
-            cliente.receberMensagem(cliente.socket);
+            if(cliente.receberMensagem() == true) {
+                System.out.print("Mensagem: ");
+                mensagem = scanner.nextLine();
+                cliente.enviarMensagem(mensagem);
+            }
         }
     }
 
     public Cliente() {
         this.host = "localhost";
         this.porta = 4200;
-    }
-
-    public String getHost() {
-        return this.host;
-    }
-
-    public int getPorta() {
-        return this.porta;
-    }
-
-    public Socket getSocket() {
-        return this.socket;
     }
 
     public void conectar() {
@@ -46,24 +40,29 @@ public class Cliente {
         }
     }
 
-    public void enviarMensagem(Socket socket, String mensagem) {
+    public void enviarMensagem(String mensagem) {
         try {
-            PrintWriter saida = new PrintWriter(socket.getOutputStream(), true);
+            PrintWriter saida = new PrintWriter(this.socket.getOutputStream(), true);
             saida.println(mensagem);
-        } catch(Exception exception) {
-
+        } catch(Exception excecao) {
+            excecao.printStackTrace();
         }
     }
 
-    public void receberMensagem(Socket socket) {
+    public boolean receberMensagem() {
         try {
-            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String linha;
-            while((linha = entrada.readLine()) != null) {
-                System.out.println(linha);
+            ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
+            String[] mensagens = (String[]) entrada.readObject();
+            for (String mensagem : mensagens) {
+                if (mensagem.equals("true")) {
+                    return true;
+                } else {
+                    System.out.println(mensagem);
+                }
             }
-        } catch(Exception exception) {
-            exception.printStackTrace();
+        } catch(Exception excecao) {
+            excecao.printStackTrace();
         }
+        return false;
     }
 }

@@ -2,26 +2,40 @@ package prompt;
 
 import personagem.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.Scanner;
 
 public class SelecaoPersonagem {
-    public int mostrarOpcoesIniciais() {
-        Scanner scanner = new Scanner(System.in);
+    private final Socket jogadorConectado;
+    public SelecaoPersonagem(Socket jogadorConectado) {
+        this.jogadorConectado = jogadorConectado;
+    }
+    public int inicarSelecao() {
         int opcao;
         do {
-            System.out.println("Selecione uma das opções abaixo:");
-            System.out.println("1 - Selecionar personagem");
-            System.out.println("2 - Sair do Jogo");
-            System.out.print("Digite aqui: ");
-            opcao = scanner.nextInt();
-        } while(this.verificaOpcaoInicial(opcao) == false);
-        return opcao;
+            String[] mensagens = {
+                    "[SERVIDOR] Selecione uma das opções abaixo:",
+                    "[SERVIDOR] 1 - Selecionar personagem",
+                    "[SERVIDOR] 2 - Sair do Jogo",
+                    "[SERVIDOR] Digite aqui: ",
+                    "true"
+            };
+            this.enviarMensagem(this.jogadorConectado, mensagens);
+            opcao = this.receberMensagem(this.jogadorConectado);
+            // Atá aqui chega
+        } while(!this.verificaOpcaoInicial(opcao));
+        return -2;
     }
 
     private boolean verificaOpcaoInicial(int opcao) {
         if(opcao < 1 || opcao > 2) {
             return false;
         } else {
+            selecionarPersonagem();
             return true;
         }
     }
@@ -33,7 +47,7 @@ public class SelecaoPersonagem {
             this.mostrarOpcoesPersonagem();
             System.out.print("Digite aqui: ");
             opcao = scanner.nextInt();
-        } while(this.verificaOpcaoPersonagem(opcao) == false);
+        } while(!this.verificaOpcaoPersonagem(opcao));
         criaPersonagem(opcao);
     }
 
@@ -64,5 +78,29 @@ public class SelecaoPersonagem {
         System.out.println("2 - Guerreiro");
         System.out.println("3 - Mago");
         System.out.println("4 - Suporte");
+    }
+
+    public void enviarMensagem(Socket socket, String[] mensagens) {
+        try {
+            ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
+            saida.writeObject(mensagens);
+        } catch(Exception excecao) {
+            excecao.printStackTrace();
+        }
+    }
+
+    public int receberMensagem(Socket socket) {
+        try {
+            System.out.println("Recebendo mensagem...");
+            System.out.println(socket.getPort());
+            System.out.println(socket.getLocalPort());
+            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String mensagemLida = entrada.readLine();
+            System.out.println(mensagemLida);
+            return entrada.read();
+        } catch(Exception excecao) {
+            excecao.printStackTrace();
+        }
+        return -1;
     }
 }
