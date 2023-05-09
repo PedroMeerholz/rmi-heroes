@@ -5,7 +5,6 @@ import personagem.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -26,9 +25,8 @@ public class SelecaoPersonagem {
             };
             this.enviarMensagem(this.jogadorConectado, mensagens);
             opcao = this.receberMensagem(this.jogadorConectado);
-            // Até aqui chega
         } while(!this.verificaOpcaoInicial(opcao));
-        return -2;
+        return -99;
     }
 
     private boolean verificaOpcaoInicial(int opcao) {
@@ -41,13 +39,15 @@ public class SelecaoPersonagem {
         }
     }
 
+    // Tratando essa aqui
     public void selecionarPersonagem() {
-        Scanner scanner = new Scanner(System.in);
+        // Scanner scanner = new Scanner(System.in);
         int opcao;
         do {
             this.mostrarOpcoesPersonagem();
-            System.out.print("Digite aqui: ");
-            opcao = scanner.nextInt();
+            // System.out.print("Digite aqui: ");
+            // opcao = scanner.nextInt();
+            opcao = receberMensagem(jogadorConectado);
         } while(!this.verificaOpcaoPersonagem(opcao));
         criaPersonagem(opcao);
     }
@@ -74,11 +74,16 @@ public class SelecaoPersonagem {
     }
 
     private void mostrarOpcoesPersonagem() {
-        System.out.println("\nSelecione sua classe de personagem abaixo:");
-        System.out.println("1 - Arqueiro");
-        System.out.println("2 - Guerreiro");
-        System.out.println("3 - Mago");
-        System.out.println("4 - Suporte");
+        String[] mensagens = {
+            "\nSelecione sua classe de personagem abaixo:",
+            "1 - Arqueiro",
+            "2 - Guerreiro",
+            "3 - Mago",
+            "4 - Suporte",
+            "Digite aqui: ",
+            "true"
+        };
+        this.enviarMensagem(this.jogadorConectado, mensagens);
     }
 
     public void enviarMensagem(Socket socket, String[] mensagens) {

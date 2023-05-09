@@ -17,10 +17,6 @@ public class Servidor {
         Servidor servidor = new Servidor();
         servidor.iniciar_servidor();
         servidor.getJogo().iniciarJogo();
-//        while(true) {
-//            servidor.enviarMensagem(servidor.getJogadorConectado(), "[SERVIDOR] Teste");
-//            servidor.receberMensagem(servidor.getJogadorConectado());
-//        }
     }
 
     public Servidor() {

@@ -17,7 +17,6 @@ public class Cliente {
         String mensagem;
         while (true) {
             if(cliente.receberMensagem() == true) {
-                System.out.print("Mensagem: ");
                 mensagem = scanner.nextLine();
                 cliente.enviarMensagem(mensagem);
             }
@@ -53,12 +52,11 @@ public class Cliente {
         try {
             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
             String[] mensagens = (String[]) entrada.readObject();
-            for (String mensagem : mensagens) {
-                if (mensagem.equals("true")) {
+            for(int i = 0; i < mensagens.length; i++) {
+                if(mensagens[i].equals("true")) {
                     return true;
-                } else {
-                    System.out.println(mensagem);
                 }
+                System.out.println(mensagens[i]);
             }
         } catch(Exception excecao) {
             excecao.printStackTrace();
