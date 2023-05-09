@@ -33,20 +33,22 @@ public class SelecaoPersonagem {
         System.out.println("Verificando opção...");
         if(opcao < 1 || opcao > 2) {
             return false;
+        } else if (opcao == 2) {
+            String[] mensagens = {"[SERVIDOR] Jogo finalizado", "exit"};
+            this.enviarMensagem(jogadorConectado, mensagens);
+            System.out.println("[SERVIDOR] Jogo finalizado");
+            System.exit(0);
+            return false;
         } else {
             selecionarPersonagem();
             return true;
         }
     }
 
-    // Tratando essa aqui
     public void selecionarPersonagem() {
-        // Scanner scanner = new Scanner(System.in);
         int opcao;
         do {
             this.mostrarOpcoesPersonagem();
-            // System.out.print("Digite aqui: ");
-            // opcao = scanner.nextInt();
             opcao = receberMensagem(jogadorConectado);
         } while(!this.verificaOpcaoPersonagem(opcao));
         criaPersonagem(opcao);
@@ -97,7 +99,6 @@ public class SelecaoPersonagem {
 
     public int receberMensagem(Socket socket) {
         try {
-            System.out.println("Recebendo mensagem...");
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String mensagemLida = entrada.readLine();
             System.out.println(mensagemLida);

@@ -31,9 +31,6 @@ public class Cliente {
     public void conectar() {
         try {
             this.socket = new Socket(this.host, this.porta);
-            System.out.println("[JOGADOR] Conectado com sucesso");
-            System.out.printf("[JOGADOR] Port: %d\n", socket.getPort());
-            System.out.printf("[JOGADOR] Local port: %d\n", socket.getLocalPort());
         } catch (Exception excecao) {
             excecao.printStackTrace();
         }
@@ -55,6 +52,8 @@ public class Cliente {
             for(int i = 0; i < mensagens.length; i++) {
                 if(mensagens[i].equals("true")) {
                     return true;
+                } else if(mensagens[i].equals("exit")) {
+                    System.exit(0);
                 }
                 System.out.println(mensagens[i]);
             }
