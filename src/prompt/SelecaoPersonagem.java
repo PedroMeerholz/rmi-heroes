@@ -26,12 +26,13 @@ public class SelecaoPersonagem {
             };
             this.enviarMensagem(this.jogadorConectado, mensagens);
             opcao = this.receberMensagem(this.jogadorConectado);
-            // Atá aqui chega
+            // Até aqui chega
         } while(!this.verificaOpcaoInicial(opcao));
         return -2;
     }
 
     private boolean verificaOpcaoInicial(int opcao) {
+        System.out.println("Verificando opção...");
         if(opcao < 1 || opcao > 2) {
             return false;
         } else {
@@ -92,12 +93,10 @@ public class SelecaoPersonagem {
     public int receberMensagem(Socket socket) {
         try {
             System.out.println("Recebendo mensagem...");
-            System.out.println(socket.getPort());
-            System.out.println(socket.getLocalPort());
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String mensagemLida = entrada.readLine();
             System.out.println(mensagemLida);
-            return entrada.read();
+            return Integer.valueOf(mensagemLida);
         } catch(Exception excecao) {
             excecao.printStackTrace();
         }
