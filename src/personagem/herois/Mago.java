@@ -7,12 +7,14 @@ public class Mago extends Heroi {
     }
 
     @Override
-    public String toString() {
-        return "Você agora é um Mago." +
-                "\nVida: " + getVidaAtual() +
-                "\nAtaque: " + getAtaqueAtual() +
-                "\nDefesa: " + getDefesaAtual() +
-                "\n";
+    public String[] enviarMensagemCriacao() {
+        String[] mensagens = {
+                "\nVocê é um mago",
+                String.format("Vida: %d", getVidaAtual()),
+                String.format("Ataque: %d", getAtaqueAtual()),
+                String.format("Defesa: %d", getDefesaAtual()),
+        };
+        return mensagens;
     }
 
     @Override

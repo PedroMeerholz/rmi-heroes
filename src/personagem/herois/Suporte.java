@@ -26,13 +26,14 @@ public class Suporte extends Heroi {
     }
 
     @Override
-    public String toString() {
-        return "Você agora é um Suporte." +
-                "\nVida: " + getVidaAtual() +
-                "\nAtaque: " + getAtaqueAtual() +
-                "\nDefesa: " + getDefesaAtual() +
-                "\nPoder de Cura: " + getQtdCuraAtual() +
-                "\n";
+    public String[] enviarMensagemCriacao() {
+        String[] mensagens = {
+                "\nVocê é um suporte",
+                String.format("Vida: %d", getVidaAtual()),
+                String.format("Ataque: %d", getAtaqueAtual()),
+                String.format("Defesa: %d", getDefesaAtual()),
+        };
+        return mensagens;
     }
 
     @Override

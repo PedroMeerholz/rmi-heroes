@@ -8,4 +8,5 @@ public abstract class Heroi extends Personagem {
     }
 
     public abstract String classeHeroi();
+    public abstract String[] enviarMensagemCriacao();
 }

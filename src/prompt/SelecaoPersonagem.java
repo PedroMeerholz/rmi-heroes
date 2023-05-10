@@ -10,8 +10,10 @@ import java.util.Scanner;
 
 public class SelecaoPersonagem {
     private final Socket jogadorConectado;
+    private final GerenciadorDePersonagem gerenciadorDePersonagem;
     public SelecaoPersonagem(Socket jogadorConectado) {
         this.jogadorConectado = jogadorConectado;
+        this.gerenciadorDePersonagem = new GerenciadorDePersonagem(this.jogadorConectado);
     }
     public int inicarSelecao() {
         int opcao;
@@ -65,13 +67,13 @@ public class SelecaoPersonagem {
 
     private void criaPersonagem(int idClassePersonagem) {
         if(idClassePersonagem == 1) {
-            GerenciadorDePersonagem.criarArqueiro();
+            this.gerenciadorDePersonagem.criarArqueiro();
         } else if(idClassePersonagem == 2) {
-            GerenciadorDePersonagem.criarGuerreiro();
+            this.gerenciadorDePersonagem.criarGuerreiro();
         } else if(idClassePersonagem == 3) {
-            GerenciadorDePersonagem.criarMago();
+            this.gerenciadorDePersonagem.criarMago();
         } else {
-            GerenciadorDePersonagem.criarSuporte();
+            this.gerenciadorDePersonagem.criarSuporte();
         }
     }
 

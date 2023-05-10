@@ -7,12 +7,14 @@ public class Arqueiro extends Heroi {
     }
 
     @Override
-    public String toString() {
-        return "Você é um arqueiro." +
-                "\nVida: " + getVidaAtual() +
-                "\nAtaque: " + getAtaqueAtual() +
-                "\nDefesa: " + getDefesaAtual() +
-                "\n";
+    public String[] enviarMensagemCriacao() {
+        String[] mensagens = {
+                "\nVocê é um arqueiro",
+                String.format("Vida: %d", getVidaAtual()),
+                String.format("Ataque: %d", getAtaqueAtual()),
+                String.format("Defesa: %d", getDefesaAtual()),
+        };
+        return mensagens;
     }
 
     @Override
