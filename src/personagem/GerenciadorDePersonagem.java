@@ -49,10 +49,10 @@ public class GerenciadorDePersonagem {
         this.enviarMensagem(this.jogadorConectado, this.mensagens);
     }
 
-    public void criarSuporte() {
-        Suporte suporte = new Suporte(47, 595, 29);
-        herois.add(suporte);
-        this.mensagens = suporte.enviarMensagemCriacao();
+    public void criarEscudeiro() {
+        Escudeiro escudeiro = new Escudeiro(47, 500, 69);
+        herois.add(escudeiro);
+        this.mensagens = escudeiro.enviarMensagemCriacao();
         this.enviarMensagem(this.jogadorConectado, this.mensagens);
     }
 

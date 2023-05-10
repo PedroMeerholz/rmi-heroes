@@ -73,7 +73,7 @@ public class SelecaoPersonagem {
         } else if(idClassePersonagem == 3) {
             this.gerenciadorDePersonagem.criarMago();
         } else {
-            this.gerenciadorDePersonagem.criarSuporte();
+            this.gerenciadorDePersonagem.criarEscudeiro();
         }
     }
 
@@ -83,7 +83,7 @@ public class SelecaoPersonagem {
             "1 - Arqueiro",
             "2 - Guerreiro",
             "3 - Mago",
-            "4 - Suporte",
+            "4 - Escudeiro",
             "Digite aqui: ",
             "true"
         };
