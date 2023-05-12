@@ -1,6 +1,7 @@
 package prompt;
 
 import personagem.GerenciadorDePersonagem;
+import personagem.resultadoAtaque.ResultadoAtaque;
 import personagem.herois.Heroi;
 import personagem.npcs.Npc;
 import personagem.Personagem;
@@ -80,18 +81,26 @@ public class Jogo {
             int alvoIdx = selecionarAlvo();
             alvoIdx -= 1;
             Npc npcAlvo = npcs.get(alvoIdx);
-            herois.get(0).atacar(npcAlvo);
-            if(npcAlvo.getVidaAtual() <= 0) {
-                npcAlvo.setVivo(false);
-                if(npcAlvo.getNome() != "Necromancer") {
-                    npcs.remove(npcAlvo);
-                }
-            }
+            ResultadoAtaque resultadoAtaque = herois.get(0).atacar(npcAlvo);
+            verificarResultadoAtaque(resultadoAtaque);
+            verificarVidaAlvo(npcAlvo);
         } else {
             // defender
             herois.get(0).defender();
             heroisComBonusDeDefesa.add(herois.get(0));
         }
+    }
+
+    private void verificarResultadoAtaque(ResultadoAtaque resultadoAtaque) {
+        ArrayList<String> listaMensagens = new ArrayList<>();
+        if(resultadoAtaque.getDano() == 0) {
+            listaMensagens.add("O ataque não causou nenhum dano ao alvo.");
+        } else {
+            listaMensagens.add(String.format("Dano causado: %d\n", resultadoAtaque.getDano()));
+            listaMensagens.add(String.format("Vida atual do alvo: %d\n\n", resultadoAtaque.getVidaAtualAlvo()));
+        }
+        String[] mensagens = listaMensagens.toArray(new String[0]);
+        this.enviarMensagem(this.jogadorConectado, mensagens);
     }
 
     private int selecionarAlvo() {
@@ -179,6 +188,15 @@ public class Jogo {
             };
             this.enviarMensagem(this.jogadorConectado,  mensagens);
             System.exit(0);
+        }
+    }
+
+    private void verificarVidaAlvo(Npc npcAlvo) {
+        if(npcAlvo.getVidaAtual() <= 0) {
+            npcAlvo.setVivo(false);
+            if(npcAlvo.getNome() != "Necromancer") {
+                npcs.remove(npcAlvo);
+            }
         }
     }
 

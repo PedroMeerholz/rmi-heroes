@@ -1,8 +1,6 @@
 package personagem;
 
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.ArrayList;
+import personagem.resultadoAtaque.ResultadoAtaque;
 
 public abstract class Personagem {
     private int ataqueBase;
@@ -82,17 +80,17 @@ public abstract class Personagem {
         this.vivo = vivo;
     }
 
-    public int atacar(Personagem personagemAlvo) {
+    public ResultadoAtaque atacar(Personagem personagemAlvo) {
         int dano = this.ataqueAtual - personagemAlvo.getDefesaAtual();
-        ArrayList<String> mensagens = new ArrayList<>();
+        ResultadoAtaque resultadoAtaque = new ResultadoAtaque();
         if(dano <= 0) {
-            mensagens.add("O ataque não causou nenhum dano ao alvo.\n");
+            resultadoAtaque.setDano(dano);
         } else {
             personagemAlvo.setVidaAtual(personagemAlvo.getVidaAtual() - dano);
-            mensagens.add(String.format("Dano causado: %d\n", dano));
-            mensagens.add(String.format("Vida atual do alvo: %d\n\n", personagemAlvo.getVidaAtual()));
+            resultadoAtaque.setDano(dano);
+            resultadoAtaque.setVidaAtualAlvo(personagemAlvo.getVidaAtual());
         }
-        String[] mensagemParaEnvio = mensagens.toArray(new String[0]);
+        return resultadoAtaque;
     }
 
     public void defender() {
@@ -105,14 +103,5 @@ public abstract class Personagem {
 
     public void removerBonusDefesa() {
         this.defesaAtual -= 5;
-    }
-
-    private void enviarMensagem(Socket socket, String[] mensagens) {
-        try {
-            ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
-            saida.writeObject(mensagens);
-        } catch(Exception exception) {
-            exception.printStackTrace();
-        }
     }
 }
