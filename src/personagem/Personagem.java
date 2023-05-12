@@ -79,12 +79,13 @@ public abstract class Personagem {
 
     public void atacar(Personagem personagemAlvo) {
         int dano = this.ataqueAtual - personagemAlvo.getDefesaAtual();
+        String[] mensagens = {};
         if(dano <= 0) {
-            System.out.println("O ataque não causou nenhum dano ao alvo.\n");
+            mensagens[0] = "O ataque não causou nenhum dano ao alvo.\n";
         } else {
             personagemAlvo.setVidaAtual(personagemAlvo.getVidaAtual() - dano);
-            System.out.printf("Dano causado: %d\n", dano);
-            System.out.printf("Vida atual do alvo: %d\n\n", personagemAlvo.getVidaAtual());
+            mensagens[0] = String.format("Dano causado: %d\n", dano);
+            mensagens[1] = String.format("Vida atual do alvo: %d\n\n", personagemAlvo.getVidaAtual());
         }
     }
 

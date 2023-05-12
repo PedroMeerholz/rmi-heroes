@@ -46,22 +46,4 @@ public class Servidor {
             exception.printStackTrace();
         }
     }
-
-    public void enviarMensagem(Socket socket, String mensagem) {
-        try {
-            PrintWriter saida = new PrintWriter(socket.getOutputStream(), true);
-            saida.println(mensagem);
-        } catch (Exception execao) {
-            execao.printStackTrace();
-        }
-    }
-
-    public void receberMensagem(Socket socket) {
-        try {
-            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.printf("[JOGADOR %d] %s\n", socket.getPort(), entrada.readLine());
-        } catch(Exception excecao) {
-            excecao.printStackTrace();
-        }
-    }
 }

@@ -50,18 +50,22 @@ public class Jogo {
 
     private void executarTurnoDoJogador(int turno) {
         int opcao;
-        Scanner scanner = new Scanner(System.in);
+        String[] mensagens = {
+                String.format("Turno %d\n", turno),
+                "Que ação você deseja fazer? ",
+                "1 - Atacar",
+                "2 - Defender",
+                "Digite aqui: ",
+                "true"
+        };
         do {
-            System.out.printf("Turno %d\n", turno);
-            System.out.println("Que ação você deseja fazer? ");
-            System.out.println("1 - Atacar");
-            System.out.println("2 - Defender");
-            System.out.printf("Digite aqui: ");
-              opcao = scanner.nextInt();
+            this.enviarMensagem(this.jogadorConectado, mensagens);
+            opcao = this.receberMensagem(this.jogadorConectado);
         } while (this.verificaOpcaoDoTurnoDoJogador(opcao) == false);
     }
 
     private boolean verificaOpcaoDoTurnoDoJogador(int opcao) {
+        System.out.println("Verificação de opção");
         if(opcao < 1 || opcao > 2) {
             return false;
         } else {
@@ -71,6 +75,7 @@ public class Jogo {
     }
 
     private void acionaAcaoTurnoDoJogador(int opcao) {
+        System.out.printf("Opção: %d\n", opcao);
         if(opcao == 1) {
             // atacar
             int alvoIdx = selecionarAlvo();
@@ -91,19 +96,23 @@ public class Jogo {
     }
 
     private int selecionarAlvo() {
+        System.out.println("Seleção de alvo");
         int alvo;
-        Scanner scanner = new Scanner(System.in);
+        ArrayList<String> mensagens = new ArrayList<>();
         do {
-            System.out.println("Selecione seu alvo abaixo");
+            mensagens.add("Selecione seu alvo abaixo");
             for(int i = 0; i < npcs.size(); i++){
                 if(i == 0) {
-                    System.out.println("1 - Necromancer");
+                    mensagens.add("1 - Necromancer");
                 } else {
-                    System.out.printf("%d - %d° Servo\n", i+1, i);
+                    mensagens.add(String.format("%d - %d° Servo\n", i+1, i));
                 }
             }
-            System.out.print("Digite aqui: ");
-            alvo = scanner.nextInt();
+            mensagens.add("Digite aqui:");
+            mensagens.add("true");
+            System.out.println((String[]) mensagens.toArray());
+            this.enviarMensagem(this.jogadorConectado, (String[]) mensagens.toArray());
+            alvo = this.receberMensagem(this.jogadorConectado);
         } while(verificarOpcaoDeAlvo(alvo) == false);
         return alvo;
     }
@@ -151,18 +160,26 @@ public class Jogo {
 
     private void verificarHeroisVivos() {
         if (herois.size() < 1) {
-            System.out.println("Você foi derrotado e o Necromancer escapou...");
-            System.out.println("A humanidade sofrerá por um longo tempo!");
-            System.out.println("==== FIM DE JOGO ====");
+            String[] mensagens = {
+                    "Você foi derrotado e o Necromancer escapou...",
+                    "A humanidade sofrerá por um longo tempo!",
+                    "==== FIM DE JOGO ====",
+                    "exit"
+            };
+            this.enviarMensagem(this.jogadorConectado, mensagens);
             System.exit(0);
         }
     }
 
     private void verificarNpcsVivos() {
         if (!npcs.get(0).isVivo()) {
-            System.out.println("Você derrotou o Necromancer e seus servos...");
-            System.out.println("A humanidade está a salvo e você foi reconhecido como herói!");
-            System.out.println("==== FIM DE JOGO ====");
+            String[] mensagens = {
+                    "Você derrotou o necromancer e seus servos...",
+                    "A humanidade está a salvo e você foi reconhecido como herói!",
+                    "==== FIM DE JOGO ====",
+                    "exit"
+            };
+            this.enviarMensagem(this.jogadorConectado,  mensagens);
             System.exit(0);
         }
     }
@@ -179,8 +196,9 @@ public class Jogo {
     public int receberMensagem(Socket socket) {
         try {
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println(entrada.read());
-            return entrada.read();
+            String mensagemLida = entrada.readLine();
+            System.out.println(mensagemLida);
+            return Integer.valueOf(mensagemLida);
         } catch(Exception exception) {
             exception.printStackTrace();
         }
