@@ -1,7 +1,6 @@
 package personagem.npcs;
 
 import personagem.Personagem;
-
 import java.util.Random;
 
 public abstract class Npc extends Personagem {

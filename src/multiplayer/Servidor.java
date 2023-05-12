@@ -2,9 +2,6 @@ package multiplayer;
 
 import prompt.Jogo;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -21,10 +18,6 @@ public class Servidor {
 
     public Servidor() {
         this.porta = 4200;
-    }
-
-    public Socket getJogadorConectado() {
-        return  this.jogadorConectado;
     }
 
     public Jogo getJogo() {
