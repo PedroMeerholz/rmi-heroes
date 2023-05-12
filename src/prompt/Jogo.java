@@ -9,7 +9,6 @@ import turno.Turno;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Jogo {
     private ArrayList<Npc> npcs;
@@ -96,22 +95,21 @@ public class Jogo {
     }
 
     private int selecionarAlvo() {
-        System.out.println("Seleção de alvo");
         int alvo;
-        ArrayList<String> mensagens = new ArrayList<>();
+        ArrayList<String> listaMensagens = new ArrayList<>();
         do {
-            mensagens.add("Selecione seu alvo abaixo");
+            listaMensagens.add("Selecione seu alvo abaixo");
             for(int i = 0; i < npcs.size(); i++){
                 if(i == 0) {
-                    mensagens.add("1 - Necromancer");
+                    listaMensagens.add("1 - Necromancer");
                 } else {
-                    mensagens.add(String.format("%d - %d° Servo\n", i+1, i));
+                    listaMensagens.add(String.format("%d - %d° Servo", i+1, i));
                 }
             }
-            mensagens.add("Digite aqui:");
-            mensagens.add("true");
-            System.out.println((String[]) mensagens.toArray());
-            this.enviarMensagem(this.jogadorConectado, (String[]) mensagens.toArray());
+            listaMensagens.add("Digite aqui:");
+            listaMensagens.add("true");
+            String[] mensagensParaEnvio = listaMensagens.toArray(new String[0]);
+            this.enviarMensagem(this.jogadorConectado, mensagensParaEnvio);
             alvo = this.receberMensagem(this.jogadorConectado);
         } while(verificarOpcaoDeAlvo(alvo) == false);
         return alvo;
@@ -184,7 +182,7 @@ public class Jogo {
         }
     }
 
-    public void enviarMensagem(Socket socket, String[] mensagens) {
+    private void enviarMensagem(Socket socket, String[] mensagens) {
         try {
             ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
             saida.writeObject(mensagens);
@@ -193,7 +191,7 @@ public class Jogo {
         }
     }
 
-    public int receberMensagem(Socket socket) {
+    private int receberMensagem(Socket socket) {
         try {
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String mensagemLida = entrada.readLine();
