@@ -83,7 +83,7 @@ public class Jogo {
             Npc npcAlvo = npcs.get(alvoIdx);
             ResultadoAtaque resultadoAtaque = herois.get(0).atacar(npcAlvo);
             verificarResultadoAtaque(resultadoAtaque);
-            verificarVidaAlvo(npcAlvo);
+            verificarVidaNpcAlvo(npcAlvo);
         } else {
             // defender
             herois.get(0).defender();
@@ -191,7 +191,7 @@ public class Jogo {
         }
     }
 
-    private void verificarVidaAlvo(Npc npcAlvo) {
+    private void verificarVidaNpcAlvo(Npc npcAlvo) {
         if(npcAlvo.getVidaAtual() <= 0) {
             npcAlvo.setVivo(false);
             if(npcAlvo.getNome() != "Necromancer") {
