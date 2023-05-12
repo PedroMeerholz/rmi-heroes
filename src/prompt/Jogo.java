@@ -82,7 +82,7 @@ public class Jogo {
             alvoIdx -= 1;
             Npc npcAlvo = npcs.get(alvoIdx);
             ResultadoAtaque resultadoAtaque = herois.get(0).atacar(npcAlvo);
-            verificarResultadoAtaque(resultadoAtaque);
+            verificarResultadoAtaqueHeroi(resultadoAtaque);
             verificarVidaNpcAlvo(npcAlvo);
         } else {
             // defender
@@ -91,7 +91,7 @@ public class Jogo {
         }
     }
 
-    private void verificarResultadoAtaque(ResultadoAtaque resultadoAtaque) {
+    private void verificarResultadoAtaqueHeroi(ResultadoAtaque resultadoAtaque) {
         ArrayList<String> listaMensagens = new ArrayList<>();
         if(resultadoAtaque.getDano() == 0) {
             listaMensagens.add("O ataque não causou nenhum dano ao alvo.");
@@ -146,18 +146,25 @@ public class Jogo {
         for(int i = 0; i < this.npcs.size(); i++) {
             npc = this.npcs.get(i);
             int alvo = npc.selecionarAlvo();
-            this.atacarHeroiAlvo(this.npcs.get(i), this.herois.get(alvo));
+            ResultadoAtaque resultadoAtaque = this.atacarHeroiAlvo(this.npcs.get(i), this.herois.get(alvo));
+            String[] mensagens = {
+                    String.format("%s está atacando...", resultadoAtaque.getPersonagemAtacante()),
+                    String.format("%s atacou o %s.", resultadoAtaque.getPersonagemAtacante(), resultadoAtaque.getPersonagemAlvo())
+            };
+            this.enviarMensagem(this.jogadorConectado, mensagens);
         }
     }
 
-    private void atacarHeroiAlvo(Npc npc, Heroi heroi) {
-        System.out.printf("%s está atacando...\n", npc.getNome());
-        System.out.printf("%s atacou o %s. ", npc.getNome(), heroi.classeHeroi());
+    private ResultadoAtaque atacarHeroiAlvo(Npc npc, Heroi heroi) {
+        ResultadoAtaque resultadoAtaque = new ResultadoAtaque();
+        resultadoAtaque.setPersonagemAtacante(npc.getNome());
+        resultadoAtaque.setPersonagemAlvo(heroi.classeHeroi());
         npc.atacar(heroi);
         if(heroi.getVidaAtual() <= 0) {
             heroi.setVivo(false);
             herois.remove(heroi);
         }
+        return resultadoAtaque;
     }
 
     private void verificarPersonagensVivos() {
