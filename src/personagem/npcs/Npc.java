@@ -20,6 +20,6 @@ public abstract class Npc extends Personagem {
 
     public int selecionarAlvo() {
         Random random = new Random();
-        return random.nextInt(1);
+        return random.nextInt(2);
     }
 }

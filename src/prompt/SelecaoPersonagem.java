@@ -6,77 +6,83 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class SelecaoPersonagem {
-    private final Socket jogadorConectado;
+    private final ArrayList<Socket> jogadoresConectados;
     private final GerenciadorDePersonagem gerenciadorDePersonagem;
-    public SelecaoPersonagem(Socket jogadorConectado) {
-        this.jogadorConectado = jogadorConectado;
-        this.gerenciadorDePersonagem = new GerenciadorDePersonagem(this.jogadorConectado);
+    public SelecaoPersonagem(ArrayList jogadoresConectados) {
+        this.jogadoresConectados = jogadoresConectados;
+        this.gerenciadorDePersonagem = new GerenciadorDePersonagem();
     }
-    public int inicarSelecao() {
+    public void inicarSelecao(Socket jogadorConectado) {
         int opcao;
+        String[] mensagens = {
+                "Selecione uma das opções abaixo:",
+                "1 - Selecionar personagem",
+                "2 - Sair do Jogo",
+                "Digite aqui: ",
+                "true"
+        };
         do {
-            String[] mensagens = {
-                    "[SERVIDOR] Selecione uma das opções abaixo:",
-                    "[SERVIDOR] 1 - Selecionar personagem",
-                    "[SERVIDOR] 2 - Sair do Jogo",
-                    "[SERVIDOR] Digite aqui: ",
-                    "true"
-            };
-            this.enviarMensagem(this.jogadorConectado, mensagens);
-            opcao = this.receberMensagem(this.jogadorConectado);
-        } while(!this.verificaOpcaoInicial(opcao));
-        return -99;
+            this.enviarMensagem(jogadorConectado, mensagens);
+            opcao = this.receberMensagem(jogadorConectado);
+        } while(!this.verificaOpcaoInicial(opcao, jogadorConectado));
     }
 
-    private boolean verificaOpcaoInicial(int opcao) {
-        System.out.println("Verificando opção...");
+    private boolean verificaOpcaoInicial(int opcao, Socket jogadorConectado) {
         if(opcao < 1 || opcao > 2) {
             return false;
         } else if (opcao == 2) {
-            String[] mensagens = {"[SERVIDOR] Jogo finalizado", "exit"};
-            this.enviarMensagem(jogadorConectado, mensagens);
-            System.out.println("[SERVIDOR] Jogo finalizado");
-            System.exit(0);
+            this.finalizarJogo();
             return false;
         } else {
-            selecionarPersonagem();
+            selecionarPersonagem(jogadorConectado);
             return true;
         }
     }
 
-    public void selecionarPersonagem() {
+    private void finalizarJogo() {
+        String[] mensagens = {"[SERVIDOR] Jogo finalizado", "exit"};
+        for (Socket socketJogador : this.jogadoresConectados) {
+            this.enviarMensagem(socketJogador, mensagens);
+        }
+        System.out.println("[SERVIDOR] Jogo finalizado");
+        System.exit(0);
+    }
+
+    public void selecionarPersonagem(Socket jogadorConectado) {
         int opcao;
         do {
-            this.mostrarOpcoesPersonagem();
+            this.mostrarOpcoesPersonagem(jogadorConectado);
             opcao = receberMensagem(jogadorConectado);
-        } while(!this.verificaOpcaoPersonagem(opcao));
-        criaPersonagem(opcao);
+        } while(!this.verificaOpcaoPersonagem(opcao, jogadorConectado));
+        criaPersonagem(opcao, jogadorConectado);
     }
 
-    private boolean verificaOpcaoPersonagem(int opcao) {
+    private boolean verificaOpcaoPersonagem(int opcao, Socket jogadorconectado) {
         if (opcao < 1 || opcao > 4) {
-            System.out.println("\nSelecione uma opção válida...");
+            String[] mensagens = {"\nSelecione uma opção válida..."};
+            this.enviarMensagem(jogadorconectado, mensagens);
             return false;
         } else {
             return true;
         }
     }
 
-    private void criaPersonagem(int idClassePersonagem) {
+    private void criaPersonagem(int idClassePersonagem, Socket jogadorConectado) {
         if(idClassePersonagem == 1) {
-            this.gerenciadorDePersonagem.criarArqueiro();
+            this.gerenciadorDePersonagem.criarArqueiro(jogadorConectado);
         } else if(idClassePersonagem == 2) {
-            this.gerenciadorDePersonagem.criarGuerreiro();
+            this.gerenciadorDePersonagem.criarGuerreiro(jogadorConectado);
         } else if(idClassePersonagem == 3) {
-            this.gerenciadorDePersonagem.criarMago();
+            this.gerenciadorDePersonagem.criarMago(jogadorConectado);
         } else {
-            this.gerenciadorDePersonagem.criarEscudeiro();
+            this.gerenciadorDePersonagem.criarEscudeiro(jogadorConectado);
         }
     }
 
-    private void mostrarOpcoesPersonagem() {
+    private void mostrarOpcoesPersonagem(Socket jogadorConectado) {
         String[] mensagens = {
             "\nSelecione sua classe de personagem abaixo:",
             "1 - Arqueiro",
@@ -86,10 +92,10 @@ public class SelecaoPersonagem {
             "Digite aqui: ",
             "true"
         };
-        this.enviarMensagem(this.jogadorConectado, mensagens);
+        this.enviarMensagem(jogadorConectado, mensagens);
     }
 
-    public void enviarMensagem(Socket socket, String[] mensagens) {
+    private void enviarMensagem(Socket socket, String[] mensagens) {
         try {
             ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
             saida.writeObject(mensagens);
@@ -98,11 +104,10 @@ public class SelecaoPersonagem {
         }
     }
 
-    public int receberMensagem(Socket socket) {
+    private int receberMensagem(Socket socket) {
         try {
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String mensagemLida = entrada.readLine();
-            System.out.println(mensagemLida);
             return Integer.valueOf(mensagemLida);
         } catch(Exception excecao) {
             excecao.printStackTrace();

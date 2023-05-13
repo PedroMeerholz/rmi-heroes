@@ -1,6 +1,6 @@
 package personagem;
 
-import personagem.resultadoAtaque.ResultadoAtaque;
+import turno.resultadoAtaque.ResultadoAtaque;
 
 public abstract class Personagem {
     private int ataqueBase;

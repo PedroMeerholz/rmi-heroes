@@ -1,4 +1,4 @@
-package personagem.resultadoAtaque;
+package turno.resultadoAtaque;
 
 public class ResultadoAtaque {
     private String personagemAtacante;

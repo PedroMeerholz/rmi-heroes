@@ -2,12 +2,14 @@ package multiplayer;
 
 import prompt.Jogo;
 
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Servidor {
     private final int porta;
-    private Socket jogadorConectado;
+    private ArrayList<Socket> jogadoresConectados;
     private Jogo jogo;
 
     public static void main(String[] args) {
@@ -18,6 +20,7 @@ public class Servidor {
 
     public Servidor() {
         this.porta = 4200;
+        this.jogadoresConectados = new ArrayList<>();
     }
 
     public Jogo getJogo() {
@@ -26,15 +29,28 @@ public class Servidor {
 
     public void iniciar_servidor() {
         try(ServerSocket serverSocket = new ServerSocket(porta)) {
-            System.out.println("[SERVER] Servidor iniciado");
-            System.out.println("[SERVER] Aguardando usuários...");
-            while(jogadorConectado == null) {
+            System.out.println("[SERVIDOR] Servidor iniciado");
+            System.out.println("[SERVIDOR] Aguardando usuários...");
+            while(this.jogadoresConectados.size() < 2) {
                 Socket userSocket = serverSocket.accept();
-                jogadorConectado = userSocket;
-                System.out.printf("[SERVER] Usuário (port: %d) conectado\n", userSocket.getPort());
-                System.out.printf("[SERVER] Usuário (local port: %d) conectado\n", userSocket.getLocalPort());
+                this.jogadoresConectados.add(userSocket);
+                System.out.printf("[SERVIDOR] Usuário (port: %d) conectado\n", userSocket.getPort());
+                System.out.printf("[SERVIDOR] Usuário (local port: %d) conectado\n", userSocket.getLocalPort());
+                if(this.jogadoresConectados.size() == 1) {
+                    String[] mensagens = {"[SERVIDOR] Aguardando o outro jogador"};
+                    this.enviarMensagem(jogadoresConectados.get(0), mensagens);
+                }
             }
-            this.jogo = new Jogo(this.jogadorConectado);
+            this.jogo = new Jogo(this.jogadoresConectados);
+        } catch(Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    private void enviarMensagem(Socket socket, String[] mensagens) {
+        try {
+            ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
+            saida.writeObject(mensagens);
         } catch(Exception exception) {
             exception.printStackTrace();
         }

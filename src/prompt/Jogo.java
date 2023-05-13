@@ -1,7 +1,7 @@
 package prompt;
 
 import personagem.GerenciadorDePersonagem;
-import personagem.resultadoAtaque.ResultadoAtaque;
+import turno.resultadoAtaque.ResultadoAtaque;
 import personagem.herois.Heroi;
 import personagem.npcs.Npc;
 import personagem.Personagem;
@@ -15,14 +15,14 @@ public class Jogo {
     private ArrayList<Npc> npcs;
     private ArrayList<Heroi> herois;
     private ArrayList<Personagem> heroisComBonusDeDefesa;
-    private Socket jogadorConectado;
+    private ArrayList<Socket> jogadoresConectados;
     private Turno turno = new Turno();
 
-    public Jogo(Socket jogadorConectado) {
+    public Jogo(ArrayList<Socket> jogadoresConectados) {
         GerenciadorDePersonagem.criarNpcs();
         this.npcs = GerenciadorDePersonagem.npcs;
         this.heroisComBonusDeDefesa = new ArrayList<>();
-        this.jogadorConectado = jogadorConectado;
+        this.jogadoresConectados = jogadoresConectados;
     }
 
     private void mostrarMensagemInicial() {
@@ -31,24 +31,34 @@ public class Jogo {
                 "[SERVIDOR] Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...",
                 "[SERVIDOR] Você tem o dever de derrotá-los e evitar que eles escapem!"
         };
-        this.enviarMensagem(this.jogadorConectado, mensagens);
+        for (Socket socketJogador : this.jogadoresConectados) {
+            this.enviarMensagem(socketJogador, mensagens);
+        }
     }
 
     public void iniciarJogo() {
+        SelecaoPersonagem selecaoPersonagem = new SelecaoPersonagem(this.jogadoresConectados);
         this.mostrarMensagemInicial();
-        SelecaoPersonagem selecaoPersonagem = new SelecaoPersonagem(this.jogadorConectado);
-        selecaoPersonagem.inicarSelecao();
+        for (Socket socketJogador : this.jogadoresConectados) {
+            selecaoPersonagem.inicarSelecao(socketJogador);
+        }
         this.herois = GerenciadorDePersonagem.herois;
-        do {
-            this.executarTurnoDoJogador(turno.getTurno());
-            this.executarTurnoDosNpcs();
-            this.removerBonusDeDefesaExistente();
-            this.verificarPersonagensVivos();
-            turno.avancarTurno();
-        } while (!npcs.isEmpty() || !herois.isEmpty());
+        this.executarJogo();
     }
 
-    private void executarTurnoDoJogador(int turno) {
+    private void executarJogo() {
+        do {
+            for (Socket socketJogador : this.jogadoresConectados) {
+                this.executarTurnoDoJogador(this.turno.getTurno(), socketJogador);
+                this.executarTurnoDosNpcs(socketJogador);
+                this.removerBonusDeDefesaExistente();
+                this.verificarPersonagensVivos();
+            }
+            this.turno.avancarTurno();
+        } while (!this.npcs.isEmpty() || !this.herois.isEmpty());
+    }
+
+    private void executarTurnoDoJogador(int turno, Socket jogadorConectado) {
         int opcao;
         String[] mensagens = {
                 String.format("Turno %d\n", turno),
@@ -59,30 +69,28 @@ public class Jogo {
                 "true"
         };
         do {
-            this.enviarMensagem(this.jogadorConectado, mensagens);
-            opcao = this.receberMensagem(this.jogadorConectado);
-        } while (this.verificaOpcaoDoTurnoDoJogador(opcao) == false);
+            this.enviarMensagem(jogadorConectado, mensagens);
+            opcao = this.receberMensagem(jogadorConectado);
+        } while (this.verificaOpcaoDoTurnoDoJogador(opcao, jogadorConectado) == false);
     }
 
-    private boolean verificaOpcaoDoTurnoDoJogador(int opcao) {
-        System.out.println("Verificação de opção");
+    private boolean verificaOpcaoDoTurnoDoJogador(int opcao, Socket jogadorConectado) {
         if(opcao < 1 || opcao > 2) {
             return false;
         } else {
-            this.acionaAcaoTurnoDoJogador(opcao);
+            this.acionaAcaoTurnoDoJogador(opcao, jogadorConectado);
             return true;
         }
     }
 
-    private void acionaAcaoTurnoDoJogador(int opcao) {
-        System.out.printf("Opção: %d\n", opcao);
+    private void acionaAcaoTurnoDoJogador(int opcao, Socket jogadorConectado) {
         if(opcao == 1) {
             // atacar
-            int alvoIdx = selecionarAlvo();
+            int alvoIdx = selecionarAlvo(jogadorConectado);
             alvoIdx -= 1;
             Npc npcAlvo = npcs.get(alvoIdx);
             ResultadoAtaque resultadoAtaque = herois.get(0).atacar(npcAlvo);
-            verificarResultadoAtaqueHeroi(resultadoAtaque);
+            verificarResultadoAtaqueHeroi(resultadoAtaque, jogadorConectado);
             verificarVidaNpcAlvo(npcAlvo);
         } else {
             // defender
@@ -91,7 +99,7 @@ public class Jogo {
         }
     }
 
-    private void verificarResultadoAtaqueHeroi(ResultadoAtaque resultadoAtaque) {
+    private void verificarResultadoAtaqueHeroi(ResultadoAtaque resultadoAtaque, Socket jogadorConectado) {
         ArrayList<String> listaMensagens = new ArrayList<>();
         if(resultadoAtaque.getDano() == 0) {
             listaMensagens.add("O ataque não causou nenhum dano ao alvo.");
@@ -100,10 +108,10 @@ public class Jogo {
             listaMensagens.add(String.format("Vida atual do alvo: %d\n\n", resultadoAtaque.getVidaAtualAlvo()));
         }
         String[] mensagens = listaMensagens.toArray(new String[0]);
-        this.enviarMensagem(this.jogadorConectado, mensagens);
+        this.enviarMensagem(jogadorConectado, mensagens);
     }
 
-    private int selecionarAlvo() {
+    private int selecionarAlvo(Socket jogadorConectado) {
         int alvo;
         ArrayList<String> listaMensagens = new ArrayList<>();
         do {
@@ -118,8 +126,8 @@ public class Jogo {
             listaMensagens.add("Digite aqui:");
             listaMensagens.add("true");
             String[] mensagensParaEnvio = listaMensagens.toArray(new String[0]);
-            this.enviarMensagem(this.jogadorConectado, mensagensParaEnvio);
-            alvo = this.receberMensagem(this.jogadorConectado);
+            this.enviarMensagem(jogadorConectado, mensagensParaEnvio);
+            alvo = this.receberMensagem(jogadorConectado);
         } while(verificarOpcaoDeAlvo(alvo) == false);
         return alvo;
     }
@@ -141,7 +149,7 @@ public class Jogo {
         heroisComBonusDeDefesa.clear();
     }
 
-    private void executarTurnoDosNpcs() {
+    private void executarTurnoDosNpcs(Socket jogadorConectado) {
         Npc npc;
         for(int i = 0; i < this.npcs.size(); i++) {
             npc = this.npcs.get(i);
@@ -151,7 +159,7 @@ public class Jogo {
                     String.format("%s está atacando...", resultadoAtaque.getPersonagemAtacante()),
                     String.format("%s atacou o %s.", resultadoAtaque.getPersonagemAtacante(), resultadoAtaque.getPersonagemAlvo())
             };
-            this.enviarMensagem(this.jogadorConectado, mensagens);
+            this.enviarMensagem(jogadorConectado, mensagens);
         }
     }
 
@@ -180,7 +188,10 @@ public class Jogo {
                     "==== FIM DE JOGO ====",
                     "exit"
             };
-            this.enviarMensagem(this.jogadorConectado, mensagens);
+            for (Socket socketJogador : this.jogadoresConectados) {
+                this.enviarMensagem(socketJogador, mensagens);
+            }
+
             System.exit(0);
         }
     }
@@ -193,7 +204,9 @@ public class Jogo {
                     "==== FIM DE JOGO ====",
                     "exit"
             };
-            this.enviarMensagem(this.jogadorConectado,  mensagens);
+            for (Socket socketJogador : this.jogadoresConectados) {
+                this.enviarMensagem(socketJogador, mensagens);
+            }
             System.exit(0);
         }
     }
@@ -220,7 +233,6 @@ public class Jogo {
         try {
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String mensagemLida = entrada.readLine();
-            System.out.println(mensagemLida);
             return Integer.valueOf(mensagemLida);
         } catch(Exception exception) {
             exception.printStackTrace();

@@ -13,12 +13,8 @@ import java.util.ArrayList;
 public class GerenciadorDePersonagem {
     public static ArrayList<Npc> npcs = new ArrayList<>();
     public static ArrayList<Heroi> herois = new ArrayList<>();
-    private Socket jogadorConectado;
     private String[] mensagens;
 
-    public GerenciadorDePersonagem(Socket jogadorConectado) {
-        this.jogadorConectado = jogadorConectado;
-    }
     public static ArrayList<Npc> criarNpcs() {
         npcs.add(new Necromancer(53, 1000, 30, "Necromancer"));
         for (int i = 0; i < 3; i++) {
@@ -28,32 +24,32 @@ public class GerenciadorDePersonagem {
         return npcs;
     }
 
-    public void criarArqueiro() {
+    public void criarArqueiro(Socket jogadorConectado) {
         Arqueiro arqueiro = new Arqueiro(59, 640, 26);
         herois.add(arqueiro);
         this.mensagens = arqueiro.enviarMensagemCriacao();
-        this.enviarMensagem(this.jogadorConectado, this.mensagens);
+        this.enviarMensagem(jogadorConectado, this.mensagens);
     }
 
-    public void criarGuerreiro() {
+    public void criarGuerreiro(Socket jogadorConectado) {
         Guerreiro guerreiro = new Guerreiro(64, 652, 39);
         herois.add(guerreiro);
         this.mensagens = guerreiro.enviarMensagemCriacao();
-        this.enviarMensagem(this.jogadorConectado, this.mensagens);
+        this.enviarMensagem(jogadorConectado, this.mensagens);
     }
 
-    public void criarMago() {
+    public void criarMago(Socket jogadorConectado) {
         Mago mago = new Mago(53, 590, 21);
         herois.add(mago);
         this.mensagens = mago.enviarMensagemCriacao();
-        this.enviarMensagem(this.jogadorConectado, this.mensagens);
+        this.enviarMensagem(jogadorConectado, this.mensagens);
     }
 
-    public void criarEscudeiro() {
+    public void criarEscudeiro(Socket jogadorConectado) {
         Escudeiro escudeiro = new Escudeiro(47, 500, 69);
         herois.add(escudeiro);
         this.mensagens = escudeiro.enviarMensagemCriacao();
-        this.enviarMensagem(this.jogadorConectado, this.mensagens);
+        this.enviarMensagem(jogadorConectado, this.mensagens);
     }
 
     private void enviarMensagem(Socket socket, String[] mensagens) {
