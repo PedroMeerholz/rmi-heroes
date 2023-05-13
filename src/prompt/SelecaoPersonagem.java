@@ -16,6 +16,7 @@ public class SelecaoPersonagem {
         this.jogadoresConectados = jogadoresConectados;
         this.gerenciadorDePersonagem = new GerenciadorDePersonagem();
     }
+
     public void inicarSelecao(Jogador jogadorConectado) {
         int opcao;
         String[] mensagens = {

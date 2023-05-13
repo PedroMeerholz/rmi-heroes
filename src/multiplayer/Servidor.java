@@ -35,16 +35,20 @@ public class Servidor {
                 Socket userSocket = serverSocket.accept();
                 Jogador jogador = new Jogador(userSocket);
                 this.jogadoresConectados.add(jogador);
-                System.out.printf("[SERVIDOR] Usuário (port: %d) conectado\n", userSocket.getPort());
-                System.out.printf("[SERVIDOR] Usuário (local port: %d) conectado\n", userSocket.getLocalPort());
-                if(this.jogadoresConectados.size() == 1) {
-                    String[] mensagens = {"[SERVIDOR] Aguardando o outro jogador"};
-                    this.enviarMensagem(jogador.getSocket(), mensagens);
-                }
+                this.exibirMensagemConexaoJogador(userSocket, jogador);
             }
             this.jogo = new Jogo(this.jogadoresConectados);
         } catch(Exception exception) {
             exception.printStackTrace();
+        }
+    }
+
+    private void exibirMensagemConexaoJogador(Socket userSocket, Jogador jogador) {
+        System.out.printf("[SERVIDOR] Usuário (port: %d) conectado\n", userSocket.getPort());
+        System.out.printf("[SERVIDOR] Usuário (local port: %d) conectado\n", userSocket.getLocalPort());
+        if(this.jogadoresConectados.size() == 1) {
+            String[] mensagens = {"[SERVIDOR] Aguardando o outro jogador"};
+            this.enviarMensagem(jogador.getSocket(), mensagens);
         }
     }
 
