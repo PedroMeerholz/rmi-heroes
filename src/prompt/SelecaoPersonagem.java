@@ -45,9 +45,7 @@ public class SelecaoPersonagem {
 
     private void finalizarJogo() {
         String[] mensagens = {"[SERVIDOR] Jogo finalizado", "exit"};
-        for (Jogador jogador : this.jogadoresConectados) {
-            this.enviarMensagem(jogador.getSocket(), mensagens);
-        }
+        this.enviarMensagemParaTodos(mensagens);
         System.out.println("[SERVIDOR] Jogo finalizado");
         System.exit(0);
     }
@@ -74,17 +72,14 @@ public class SelecaoPersonagem {
     private void criarPersonagem(int idClassePersonagem, Jogador jogadorConectado) {
         if(idClassePersonagem == 1) {
             jogadorConectado.setHeroi(this.gerenciadorDePersonagem.criarArqueiro());
-            this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
         } else if(idClassePersonagem == 2) {
             jogadorConectado.setHeroi(this.gerenciadorDePersonagem.criarGuerreiro());
-            this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
         } else if(idClassePersonagem == 3) {
             jogadorConectado.setHeroi(this.gerenciadorDePersonagem.criarMago());
-            this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
         } else {
             jogadorConectado.setHeroi(this.gerenciadorDePersonagem.criarEscudeiro());
-            this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
         }
+        this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
     }
 
     private void mostrarOpcoesPersonagem(Socket jogadorConectado) {
@@ -106,6 +101,12 @@ public class SelecaoPersonagem {
             saida.writeObject(mensagens);
         } catch(Exception excecao) {
             excecao.printStackTrace();
+        }
+    }
+
+    private void enviarMensagemParaTodos(String[] mensagens) {
+        for (Jogador jogador : this.jogadoresConectados) {
+            this.enviarMensagem(jogador.getSocket(), mensagens);
         }
     }
 

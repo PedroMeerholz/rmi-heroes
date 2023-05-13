@@ -31,11 +31,7 @@ public class Jogo {
                 "[SERVIDOR] Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...",
                 "[SERVIDOR] Você tem o dever de derrotá-los e evitar que eles escapem!"
         };
-        Socket socket;
-        for (Jogador jogador : this.jogadoresConectados) {
-            socket = jogador.getSocket();
-            this.enviarMensagem(socket, mensagens);
-        }
+        this.enviarMensagemParaTodos(mensagens);
     }
 
     public void iniciarJogo() {
@@ -52,19 +48,25 @@ public class Jogo {
             for (Jogador jogador : this.jogadoresConectados) {
                 if(jogador.getHeroi().isVivo()) {
                     this.executarTurnoDoJogador(this.turno.getTurno(), jogador);
-                    this.executarTurnoDosNpcs(jogador.getSocket()); // Revisar
+                    this.executarTurnoDosNpcs();
                     this.removerBonusDeDefesaExistente();
                     this.verificarPersonagensVivos();
+                    this.exibirMensagemTurnoProximoJogador(jogador);
                 }
             }
             this.turno.avancarTurno();
         } while (!this.npcs.isEmpty() || (this.jogadoresConectados.get(0).getHeroi().isVivo() || this.jogadoresConectados.get(1).getHeroi().isVivo()));
     }
 
+    private void exibirMensagemTurnoProximoJogador(Jogador jogadorConectado) {
+        String[] mensagens = {"\nVez do outro jogador"};
+        this.enviarMensagem(jogadorConectado.getSocket(), mensagens);
+    }
+
     private void executarTurnoDoJogador(int turno, Jogador jogadorConectado) {
         int opcao;
         String[] mensagens = {
-                String.format("Turno %d\n", turno),
+                String.format("\nSeu turno -> Turno %d", turno),
                 "Que ação você deseja fazer? ",
                 "1 - Atacar",
                 "2 - Defender",
@@ -153,7 +155,7 @@ public class Jogo {
         heroisComBonusDeDefesa.clear();
     }
 
-    private void executarTurnoDosNpcs(Socket jogadorConectado) {
+    private void executarTurnoDosNpcs() {
         Npc npc;
         for(int i = 0; i < this.npcs.size(); i++) {
             npc = this.npcs.get(i);
@@ -163,7 +165,7 @@ public class Jogo {
             String[] mensagens = {
                     String.format("%s atacou o %s.", resultadoAtaque.getPersonagemAtacante(), resultadoAtaque.getPersonagemAlvo())
             };
-            this.enviarMensagem(jogadorConectado, mensagens);
+            this.enviarMensagemParaTodos(mensagens);
         }
     }
 
@@ -191,9 +193,7 @@ public class Jogo {
                     "==== FIM DE JOGO ====",
                     "exit"
             };
-            for (Jogador jogador : this.jogadoresConectados) {
-                this.enviarMensagem(jogador.getSocket(), mensagens);
-            }
+            this.enviarMensagemParaTodos(mensagens);
             System.exit(0);
         }
     }
@@ -206,9 +206,7 @@ public class Jogo {
                     "==== FIM DE JOGO ====",
                     "exit"
             };
-            for (Jogador jogador : this.jogadoresConectados) {
-                this.enviarMensagem(jogador.getSocket(), mensagens);
-            }
+            this.enviarMensagemParaTodos(mensagens);
             System.exit(0);
         }
     }
@@ -228,6 +226,12 @@ public class Jogo {
             saida.writeObject(mensagens);
         } catch(Exception exception) {
             exception.printStackTrace();
+        }
+    }
+
+    private void enviarMensagemParaTodos(String[] mensagens) {
+        for (Jogador jogador : this.jogadoresConectados) {
+            this.enviarMensagem(jogador.getSocket(), mensagens);
         }
     }
 
