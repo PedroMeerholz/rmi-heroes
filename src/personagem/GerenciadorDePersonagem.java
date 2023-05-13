@@ -1,22 +1,20 @@
 package personagem;
 
-import personagem.herois.*;
-import personagem.herois.Heroi;
+import personagem.herois.Arqueiro;
+import personagem.herois.Escudeiro;
+import personagem.herois.Guerreiro;
+import personagem.herois.Mago;
 import personagem.npcs.Necromancer;
 import personagem.npcs.Npc;
 import personagem.npcs.Servo;
 
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class GerenciadorDePersonagem {
     public static ArrayList<Npc> npcs = new ArrayList<>();
-    public static ArrayList<Heroi> herois = new ArrayList<>();
-    private String[] mensagens;
 
     public static ArrayList<Npc> criarNpcs() {
-        npcs.add(new Necromancer(53, 1000, 30, "Necromancer"));
+        npcs.add(new Necromancer(70, 1000, 30, "Necromancer"));
         for (int i = 0; i < 3; i++) {
             String nome = String.format("Servo %d", i+1);
             npcs.add(new Servo(30, 296, 24, nome));
@@ -24,40 +22,19 @@ public class GerenciadorDePersonagem {
         return npcs;
     }
 
-    public void criarArqueiro(Socket jogadorConectado) {
-        Arqueiro arqueiro = new Arqueiro(59, 640, 26);
-        herois.add(arqueiro);
-        this.mensagens = arqueiro.enviarMensagemCriacao();
-        this.enviarMensagem(jogadorConectado, this.mensagens);
+    public Arqueiro criarArqueiro() {
+        return new Arqueiro(59, 640, 26);
     }
 
-    public void criarGuerreiro(Socket jogadorConectado) {
-        Guerreiro guerreiro = new Guerreiro(64, 652, 39);
-        herois.add(guerreiro);
-        this.mensagens = guerreiro.enviarMensagemCriacao();
-        this.enviarMensagem(jogadorConectado, this.mensagens);
+    public Guerreiro criarGuerreiro() {
+        return new Guerreiro(64, 652, 39);
     }
 
-    public void criarMago(Socket jogadorConectado) {
-        Mago mago = new Mago(53, 590, 21);
-        herois.add(mago);
-        this.mensagens = mago.enviarMensagemCriacao();
-        this.enviarMensagem(jogadorConectado, this.mensagens);
+    public Mago criarMago() {
+        return new Mago(53, 590, 21);
     }
 
-    public void criarEscudeiro(Socket jogadorConectado) {
-        Escudeiro escudeiro = new Escudeiro(47, 500, 69);
-        herois.add(escudeiro);
-        this.mensagens = escudeiro.enviarMensagemCriacao();
-        this.enviarMensagem(jogadorConectado, this.mensagens);
-    }
-
-    private void enviarMensagem(Socket socket, String[] mensagens) {
-        try {
-            ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
-            saida.writeObject(mensagens);
-        } catch(Exception excecao) {
-            excecao.printStackTrace();
-        }
+    public Escudeiro criarEscudeiro() {
+        return new Escudeiro(47, 500, 69);
     }
 }

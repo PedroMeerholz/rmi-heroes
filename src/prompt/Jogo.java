@@ -1,5 +1,6 @@
 package prompt;
 
+import multiplayer.Jogador;
 import personagem.GerenciadorDePersonagem;
 import turno.resultadoAtaque.ResultadoAtaque;
 import personagem.herois.Heroi;
@@ -13,12 +14,11 @@ import java.util.ArrayList;
 
 public class Jogo {
     private ArrayList<Npc> npcs;
-    private ArrayList<Heroi> herois;
     private ArrayList<Personagem> heroisComBonusDeDefesa;
-    private ArrayList<Socket> jogadoresConectados;
+    private ArrayList<Jogador> jogadoresConectados;
     private Turno turno = new Turno();
 
-    public Jogo(ArrayList<Socket> jogadoresConectados) {
+    public Jogo(ArrayList<Jogador> jogadoresConectados) {
         GerenciadorDePersonagem.criarNpcs();
         this.npcs = GerenciadorDePersonagem.npcs;
         this.heroisComBonusDeDefesa = new ArrayList<>();
@@ -31,34 +31,37 @@ public class Jogo {
                 "[SERVIDOR] Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...",
                 "[SERVIDOR] Você tem o dever de derrotá-los e evitar que eles escapem!"
         };
-        for (Socket socketJogador : this.jogadoresConectados) {
-            this.enviarMensagem(socketJogador, mensagens);
+        Socket socket;
+        for (Jogador jogador : this.jogadoresConectados) {
+            socket = jogador.getSocket();
+            this.enviarMensagem(socket, mensagens);
         }
     }
 
     public void iniciarJogo() {
         SelecaoPersonagem selecaoPersonagem = new SelecaoPersonagem(this.jogadoresConectados);
         this.mostrarMensagemInicial();
-        for (Socket socketJogador : this.jogadoresConectados) {
-            selecaoPersonagem.inicarSelecao(socketJogador);
+        for (Jogador jogador : this.jogadoresConectados) {
+            selecaoPersonagem.inicarSelecao(jogador);
         }
-        this.herois = GerenciadorDePersonagem.herois;
         this.executarJogo();
     }
 
     private void executarJogo() {
         do {
-            for (Socket socketJogador : this.jogadoresConectados) {
-                this.executarTurnoDoJogador(this.turno.getTurno(), socketJogador);
-                this.executarTurnoDosNpcs(socketJogador);
-                this.removerBonusDeDefesaExistente();
-                this.verificarPersonagensVivos();
+            for (Jogador jogador : this.jogadoresConectados) {
+                if(jogador.getHeroi().isVivo()) {
+                    this.executarTurnoDoJogador(this.turno.getTurno(), jogador);
+                    this.executarTurnoDosNpcs(jogador.getSocket()); // Revisar
+                    this.removerBonusDeDefesaExistente();
+                    this.verificarPersonagensVivos();
+                }
             }
             this.turno.avancarTurno();
-        } while (!this.npcs.isEmpty() || !this.herois.isEmpty());
+        } while (!this.npcs.isEmpty() || (this.jogadoresConectados.get(0).getHeroi().isVivo() || this.jogadoresConectados.get(1).getHeroi().isVivo()));
     }
 
-    private void executarTurnoDoJogador(int turno, Socket jogadorConectado) {
+    private void executarTurnoDoJogador(int turno, Jogador jogadorConectado) {
         int opcao;
         String[] mensagens = {
                 String.format("Turno %d\n", turno),
@@ -69,12 +72,12 @@ public class Jogo {
                 "true"
         };
         do {
-            this.enviarMensagem(jogadorConectado, mensagens);
-            opcao = this.receberMensagem(jogadorConectado);
+            this.enviarMensagem(jogadorConectado.getSocket(), mensagens);
+            opcao = this.receberMensagem(jogadorConectado.getSocket());
         } while (this.verificaOpcaoDoTurnoDoJogador(opcao, jogadorConectado) == false);
     }
 
-    private boolean verificaOpcaoDoTurnoDoJogador(int opcao, Socket jogadorConectado) {
+    private boolean verificaOpcaoDoTurnoDoJogador(int opcao, Jogador jogadorConectado) {
         if(opcao < 1 || opcao > 2) {
             return false;
         } else {
@@ -83,19 +86,20 @@ public class Jogo {
         }
     }
 
-    private void acionaAcaoTurnoDoJogador(int opcao, Socket jogadorConectado) {
+    private void acionaAcaoTurnoDoJogador(int opcao, Jogador jogadorConectado) {
+        Heroi heroi = jogadorConectado.getHeroi();
         if(opcao == 1) {
             // atacar
-            int alvoIdx = selecionarAlvo(jogadorConectado);
+            int alvoIdx = selecionarAlvo(jogadorConectado.getSocket());
             alvoIdx -= 1;
             Npc npcAlvo = npcs.get(alvoIdx);
-            ResultadoAtaque resultadoAtaque = herois.get(0).atacar(npcAlvo);
-            verificarResultadoAtaqueHeroi(resultadoAtaque, jogadorConectado);
+            ResultadoAtaque resultadoAtaque = heroi.atacar(npcAlvo);
+            verificarResultadoAtaqueHeroi(resultadoAtaque, jogadorConectado.getSocket());
             verificarVidaNpcAlvo(npcAlvo);
         } else {
             // defender
-            herois.get(0).defender();
-            heroisComBonusDeDefesa.add(herois.get(0));
+            jogadorConectado.getHeroi().defender();
+            heroisComBonusDeDefesa.add(heroi);
         }
     }
 
@@ -104,8 +108,8 @@ public class Jogo {
         if(resultadoAtaque.getDano() == 0) {
             listaMensagens.add("O ataque não causou nenhum dano ao alvo.");
         } else {
-            listaMensagens.add(String.format("Dano causado: %d\n", resultadoAtaque.getDano()));
-            listaMensagens.add(String.format("Vida atual do alvo: %d\n\n", resultadoAtaque.getVidaAtualAlvo()));
+            listaMensagens.add(String.format("Dano causado: %d", resultadoAtaque.getDano()));
+            listaMensagens.add(String.format("Vida atual do alvo: %d\n", resultadoAtaque.getVidaAtualAlvo()));
         }
         String[] mensagens = listaMensagens.toArray(new String[0]);
         this.enviarMensagem(jogadorConectado, mensagens);
@@ -154,9 +158,9 @@ public class Jogo {
         for(int i = 0; i < this.npcs.size(); i++) {
             npc = this.npcs.get(i);
             int alvo = npc.selecionarAlvo();
-            ResultadoAtaque resultadoAtaque = this.atacarHeroiAlvo(this.npcs.get(i), this.herois.get(alvo));
+            Jogador jogadorAlvo = this.jogadoresConectados.get(alvo);
+            ResultadoAtaque resultadoAtaque = this.atacarHeroiAlvo(this.npcs.get(i), jogadorAlvo.getHeroi());
             String[] mensagens = {
-                    String.format("%s está atacando...", resultadoAtaque.getPersonagemAtacante()),
                     String.format("%s atacou o %s.", resultadoAtaque.getPersonagemAtacante(), resultadoAtaque.getPersonagemAlvo())
             };
             this.enviarMensagem(jogadorConectado, mensagens);
@@ -170,7 +174,6 @@ public class Jogo {
         npc.atacar(heroi);
         if(heroi.getVidaAtual() <= 0) {
             heroi.setVivo(false);
-            herois.remove(heroi);
         }
         return resultadoAtaque;
     }
@@ -181,17 +184,16 @@ public class Jogo {
     }
 
     private void verificarHeroisVivos() {
-        if (herois.size() < 1) {
+        if (!jogadoresConectados.get(0).getHeroi().isVivo() && !jogadoresConectados.get(1).getHeroi().isVivo()) {
             String[] mensagens = {
                     "Você foi derrotado e o Necromancer escapou...",
                     "A humanidade sofrerá por um longo tempo!",
                     "==== FIM DE JOGO ====",
                     "exit"
             };
-            for (Socket socketJogador : this.jogadoresConectados) {
-                this.enviarMensagem(socketJogador, mensagens);
+            for (Jogador jogador : this.jogadoresConectados) {
+                this.enviarMensagem(jogador.getSocket(), mensagens);
             }
-
             System.exit(0);
         }
     }
@@ -200,12 +202,12 @@ public class Jogo {
         if (!npcs.get(0).isVivo()) {
             String[] mensagens = {
                     "Você derrotou o necromancer e seus servos...",
-                    "A humanidade está a salvo e você foi reconhecido como herói!",
+                    "A humanidade está a salvo e vocês foram reconhecidos como heróis!",
                     "==== FIM DE JOGO ====",
                     "exit"
             };
-            for (Socket socketJogador : this.jogadoresConectados) {
-                this.enviarMensagem(socketJogador, mensagens);
+            for (Jogador jogador : this.jogadoresConectados) {
+                this.enviarMensagem(jogador.getSocket(), mensagens);
             }
             System.exit(0);
         }

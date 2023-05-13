@@ -1,5 +1,6 @@
 package prompt;
 
+import multiplayer.Jogador;
 import personagem.*;
 
 import java.io.BufferedReader;
@@ -9,13 +10,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class SelecaoPersonagem {
-    private final ArrayList<Socket> jogadoresConectados;
+    private final ArrayList<Jogador> jogadoresConectados;
     private final GerenciadorDePersonagem gerenciadorDePersonagem;
-    public SelecaoPersonagem(ArrayList jogadoresConectados) {
+    public SelecaoPersonagem(ArrayList<Jogador> jogadoresConectados) {
         this.jogadoresConectados = jogadoresConectados;
         this.gerenciadorDePersonagem = new GerenciadorDePersonagem();
     }
-    public void inicarSelecao(Socket jogadorConectado) {
+    public void inicarSelecao(Jogador jogadorConectado) {
         int opcao;
         String[] mensagens = {
                 "Selecione uma das opções abaixo:",
@@ -25,12 +26,12 @@ public class SelecaoPersonagem {
                 "true"
         };
         do {
-            this.enviarMensagem(jogadorConectado, mensagens);
-            opcao = this.receberMensagem(jogadorConectado);
+            this.enviarMensagem(jogadorConectado.getSocket(), mensagens);
+            opcao = this.receberMensagem(jogadorConectado.getSocket());
         } while(!this.verificaOpcaoInicial(opcao, jogadorConectado));
     }
 
-    private boolean verificaOpcaoInicial(int opcao, Socket jogadorConectado) {
+    private boolean verificaOpcaoInicial(int opcao, Jogador jogadorConectado) {
         if(opcao < 1 || opcao > 2) {
             return false;
         } else if (opcao == 2) {
@@ -44,20 +45,20 @@ public class SelecaoPersonagem {
 
     private void finalizarJogo() {
         String[] mensagens = {"[SERVIDOR] Jogo finalizado", "exit"};
-        for (Socket socketJogador : this.jogadoresConectados) {
-            this.enviarMensagem(socketJogador, mensagens);
+        for (Jogador jogador : this.jogadoresConectados) {
+            this.enviarMensagem(jogador.getSocket(), mensagens);
         }
         System.out.println("[SERVIDOR] Jogo finalizado");
         System.exit(0);
     }
 
-    public void selecionarPersonagem(Socket jogadorConectado) {
+    public void selecionarPersonagem(Jogador jogadorConectado) {
         int opcao;
         do {
-            this.mostrarOpcoesPersonagem(jogadorConectado);
-            opcao = receberMensagem(jogadorConectado);
-        } while(!this.verificaOpcaoPersonagem(opcao, jogadorConectado));
-        criaPersonagem(opcao, jogadorConectado);
+            this.mostrarOpcoesPersonagem(jogadorConectado.getSocket());
+            opcao = receberMensagem(jogadorConectado.getSocket());
+        } while(!this.verificaOpcaoPersonagem(opcao, jogadorConectado.getSocket()));
+        criarPersonagem(opcao, jogadorConectado);
     }
 
     private boolean verificaOpcaoPersonagem(int opcao, Socket jogadorconectado) {
@@ -70,15 +71,19 @@ public class SelecaoPersonagem {
         }
     }
 
-    private void criaPersonagem(int idClassePersonagem, Socket jogadorConectado) {
+    private void criarPersonagem(int idClassePersonagem, Jogador jogadorConectado) {
         if(idClassePersonagem == 1) {
-            this.gerenciadorDePersonagem.criarArqueiro(jogadorConectado);
+            jogadorConectado.setHeroi(this.gerenciadorDePersonagem.criarArqueiro());
+            this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
         } else if(idClassePersonagem == 2) {
-            this.gerenciadorDePersonagem.criarGuerreiro(jogadorConectado);
+            jogadorConectado.setHeroi(this.gerenciadorDePersonagem.criarGuerreiro());
+            this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
         } else if(idClassePersonagem == 3) {
-            this.gerenciadorDePersonagem.criarMago(jogadorConectado);
+            jogadorConectado.setHeroi(this.gerenciadorDePersonagem.criarMago());
+            this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
         } else {
-            this.gerenciadorDePersonagem.criarEscudeiro(jogadorConectado);
+            jogadorConectado.setHeroi(this.gerenciadorDePersonagem.criarEscudeiro());
+            this.enviarMensagem(jogadorConectado.getSocket(), jogadorConectado.getHeroi().enviarMensagemCriacao());
         }
     }
 
