@@ -31,7 +31,14 @@ public class Jogo {
                 "[SERVIDOR] Esses monstros jamais podem sair do castelo, ou a humanidade estará em apuros...",
                 "[SERVIDOR] Você tem o dever de derrotá-los e evitar que eles escapem!"
         };
-        this.enviarMensagemParaTodos(mensagens);
+        int cont = 1;
+        for (Jogador jogador : this.jogadoresConectados) {
+            this.enviarMensagem(jogador.getSocket(), mensagens);
+            if(cont == 2) {
+                this.exibirMensagemTurnoProximoJogador(jogador);
+            }
+            cont++;
+        }
     }
 
     public void iniciarJogo() {
