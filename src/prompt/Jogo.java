@@ -65,6 +65,8 @@ public class Jogo {
         } while (!this.npcs.isEmpty() || (this.jogadoresConectados.get(0).getHeroi().isVivo() || this.jogadoresConectados.get(1).getHeroi().isVivo()));
     }
 
+
+
     private void exibirMensagemTurnoProximoJogador(Jogador jogadorConectado) {
         String[] mensagens = {"\nVez do outro jogador"};
         this.enviarMensagem(jogadorConectado.getSocket(), mensagens);
@@ -169,23 +171,25 @@ public class Jogo {
 
     private void executarTurnoDosNpcs() {
         Npc npc;
+        Jogador jogadorAlvo;
+        ResultadoAtaque resultadoAtaque;
+        int alvo;
         for(int i = 0; i < this.npcs.size(); i++) {
             npc = this.npcs.get(i);
-            int alvo = npc.selecionarAlvo();
-            Jogador jogadorAlvo = this.jogadoresConectados.get(alvo);
-            ResultadoAtaque resultadoAtaque = this.atacarHeroiAlvo(this.npcs.get(i), jogadorAlvo.getHeroi());
+            alvo = npc.selecionarAlvo();
+            jogadorAlvo = this.jogadoresConectados.get(alvo);
+            resultadoAtaque = this.atacarHeroiAlvo(this.npcs.get(i), jogadorAlvo.getHeroi());
             String[] mensagens = {
-                    String.format("%s atacou o %s.", resultadoAtaque.getPersonagemAtacante(), resultadoAtaque.getPersonagemAlvo())
+                    String.format("%s atacou o %s. Vida atual do alvo %d", resultadoAtaque.getPersonagemAtacante(), resultadoAtaque.getPersonagemAlvo(), resultadoAtaque.getVidaAtualAlvo())
             };
             this.enviarMensagemParaTodos(mensagens);
         }
     }
 
     private ResultadoAtaque atacarHeroiAlvo(Npc npc, Heroi heroi) {
-        ResultadoAtaque resultadoAtaque = new ResultadoAtaque();
+        ResultadoAtaque resultadoAtaque = npc.atacar(heroi);
         resultadoAtaque.setPersonagemAtacante(npc.getNome());
         resultadoAtaque.setPersonagemAlvo(heroi.classeHeroi());
-        npc.atacar(heroi);
         if(heroi.getVidaAtual() <= 0) {
             heroi.setVivo(false);
         }

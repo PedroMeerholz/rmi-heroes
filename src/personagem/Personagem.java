@@ -83,13 +83,9 @@ public abstract class Personagem {
     public ResultadoAtaque atacar(Personagem personagemAlvo) {
         int dano = this.ataqueAtual - personagemAlvo.getDefesaAtual();
         ResultadoAtaque resultadoAtaque = new ResultadoAtaque();
-        if(dano <= 0) {
-            resultadoAtaque.setDano(dano);
-        } else {
-            personagemAlvo.setVidaAtual(personagemAlvo.getVidaAtual() - dano);
-            resultadoAtaque.setDano(dano);
-            resultadoAtaque.setVidaAtualAlvo(personagemAlvo.getVidaAtual());
-        }
+        personagemAlvo.setVidaAtual(personagemAlvo.getVidaAtual() - dano);
+        resultadoAtaque.setDano(dano);
+        resultadoAtaque.setVidaAtualAlvo(personagemAlvo.getVidaAtual());
         return resultadoAtaque;
     }
 
