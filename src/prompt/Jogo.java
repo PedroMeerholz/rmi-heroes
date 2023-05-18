@@ -111,7 +111,12 @@ public class Jogo {
             listaMensagens.add("O ataque não causou nenhum dano ao alvo.");
         } else {
             listaMensagens.add(String.format("Dano causado: %d", resultadoAtaque.getDano()));
-            listaMensagens.add(String.format("Vida atual do alvo: %d\n", resultadoAtaque.getVidaAtualAlvo()));
+            if(resultadoAtaque.getVidaAtualAlvo() <= 0){
+                listaMensagens.add(String.format("O alvo foi abatido"));
+            }else{
+                listaMensagens.add(String.format("Vida atual do alvo: %d\n", resultadoAtaque.getVidaAtualAlvo()));
+            }
+
         }
         String[] mensagens = listaMensagens.toArray(new String[0]);
         this.enviarMensagem(jogadorConectado, mensagens);
